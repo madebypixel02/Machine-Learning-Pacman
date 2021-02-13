@@ -618,6 +618,17 @@ class Game(object):
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
         step = 0
+
+        try:
+            f = open(file = 'pacman.csv', mode='a')
+            f.close()
+        except:
+            f = open('pacman.csv', mode ='w')
+            f.write('Round,PacX,PacY,LegalNorth,LegalSouth,LegalEast,LegalWest,LegalStop,Direction,Gosth1x,Gosth1y,Ghost2x,Ghost2y,Ghost3x,Ghost3y,Ghost4x,Ghost4y,Ghost1d,Ghost2d,Ghost3d,Ghots4d,NearestFoodDistance,NumberOfFood,Score\n')
+            f.close()
+
+        f = open(file = 'pacman.csv', mode = 'a')
+        
         while not self.gameOver:
             # Fetch the next agent
             agent = self.agents[agentIndex]
@@ -653,7 +664,9 @@ class Game(object):
             if self.catchExceptions:
                 try:
                     timed_func = TimeoutFunction(agent.getAction, int(self.rules.getMoveTimeout(agentIndex)) - int(move_time))
+                   
                     try:
+                        
                         start_time = time.time()
                         if skip_action:
                             raise TimeoutFunctionException()
@@ -692,8 +705,13 @@ class Game(object):
                     return
             else:
                 action = agent.getAction(observation)
-            self.unmute()
 
+                # The pacman basic agent is the only one who has this method
+                if 'BasicAgent' in str(type(agent)):
+                    f.write(agent.printLineData(observation).join(' \n'))
+                    
+            self.unmute()
+            
             # Execute the action
             self.moveHistory.append( (agentIndex, action) )
             if self.catchExceptions:
@@ -722,6 +740,7 @@ class Game(object):
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
 
+        f.close()
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
             if "final" in dir( agent ) :

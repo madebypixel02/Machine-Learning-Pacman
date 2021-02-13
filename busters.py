@@ -165,6 +165,7 @@ class GameState(object):
         return self.data.agentStates[0].copy()
 
     def getPacmanPosition( self ):
+       # print(self.data.agentStates[0].getPosition())
         return self.data.agentStates[0].getPosition()
 
     def getNumAgents( self ):
@@ -536,6 +537,7 @@ def readCommand( argv ):
                       help=default('Time to delay between frames; <0 means keyboard'), default=0.1)
 
     options, otherjunk = parser.parse_args()
+
     if len(otherjunk) != 0:
         raise Exception('Command line input not understood: ' + otherjunk)
     args = dict()

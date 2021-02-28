@@ -619,15 +619,28 @@ class Game(object):
         numAgents = len( self.agents )
         step = 0
 
+        header = 'Round,PacX,PacY,LegalNorth,LegalSouth,LegalEast,LegalWest,LegalStop,Direction,Gosth1x,Gosth1y,Ghost2x,Ghost2y,Ghost3x,Ghost3y,Ghost4x,Ghost4y,Ghost1d,Ghost2d,Ghost3d,Ghots4d,NearestFoodDistance,NumberOfFood,Score\n'
+        
+        filename = 'paco.csv'
         try:
-            f = open(file = 'pacman.csv', mode='a')
-            f.close()
+            f = open(file = filename, mode='r')
+            f.close
         except:
-            f = open('pacman.csv', mode ='w')
-            f.write('Round,PacX,PacY,LegalNorth,LegalSouth,LegalEast,LegalWest,LegalStop,Direction,Gosth1x,Gosth1y,Ghost2x,Ghost2y,Ghost3x,Ghost3y,Ghost4x,Ghost4y,Ghost1d,Ghost2d,Ghost3d,Ghots4d,NearestFoodDistance,NumberOfFood,Score\n')
+            f = open(filename, mode = 'w')
+            f.write(header + '\n')
             f.close()
-
-        f = open(file = 'pacman.csv', mode = 'a')
+        finally:
+            f = open(filename,mode = 'r')
+            try:
+                if f.readline(1)!= header:
+                    raise EOFError 
+            except:
+                f.close()
+                f = open(filename, mode = 'w')
+                f.write(header + '\n')
+                f.close()
+                
+        f = open(file = filename, mode = 'a')
         
         while not self.gameOver:
             # Fetch the next agent

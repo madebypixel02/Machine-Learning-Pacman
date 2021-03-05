@@ -648,7 +648,48 @@ class Game(object):
                  '',
                  '@data']
 
-        filename = 'all_data_pacman.arff'
+        filename = 'testing.arff'
+
+        #another aproach
+        filename = 'file.arff'
+        needHeader = False
+        if not os.path.isfile(filename):
+            needHeader = True
+            print('This file did not exist')
+        
+        f = open(filename, mode = 'a')
+        if needHeader:
+            header = ['@relation pacman_data',
+                 '',
+                 '@attribute PacX numeric',
+                 '@attribute PacY numeric',
+                 '@attribute LegalNorth {1,0}',
+                 '@attribute LegalSouth {1,0}',
+                 '@attribute LegalEast {1,0}',
+                 '@attribute LegalWest {1,0}',
+                 '@attribute LegalStop {1,0}',
+                 '@attribute Gosth1x numeric',
+                 '@attribute Gosth1y numeric',
+                 '@attribute Gosth2x numeric',
+                 '@attribute Gosth2y numeric',
+                 '@attribute Gosth3x numeric',
+                 '@attribute Gosth3y numeric',
+                 '@attribute Gosth4x numeric',
+                 '@attribute Gosth4y numeric',
+                 '@attribute DistGosth1 numeric',
+                 '@attribute DistGosth2 numeric',
+                 '@attribute DistGosth3 numeric',
+                 '@attribute DistGosth4 numeric',
+                 '@attribute NearestFoodDist numeric',
+                 '@attribute NumOfFood numeric',
+                 '@attribute Score numeric',
+                 '@attribute Direction {North, South, East, West, Stop}',
+                 '',
+                 '@data']
+
+            for line in header: f.write(line + '\n')
+
+        """
         try:
             f = open(file = filename, mode='r')
             f.close()
@@ -667,7 +708,7 @@ class Game(object):
                 f = open(filename, mode = 'a')
                 for line in header: f.write(line + '\n')
                 f.close()
-                
+        """      
         
         f = open(file = filename, mode = 'a')
         remainingLogs = 10

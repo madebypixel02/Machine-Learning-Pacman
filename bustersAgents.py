@@ -109,6 +109,17 @@ class BustersAgent(object):
         "By default, a BustersAgent just stops.  This should be overridden."
         return Directions.STOP
 
+    def printLineData(self, gameState):
+        legalActions = gameState.getLegalPacmanActions()
+        return ''.join([',' + str(x) for x in gameState.getPacmanPosition()] + 
+                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West', 'Stop']]+
+                    [','+str(i[0])+','+str(i[1]) for i in gameState.getGhostPositions()]+
+                    [','+str(i) if i != None or i == 0 else ',-1' for i in gameState.data.ghostDistances]+
+                    [','+str(gameState.getDistanceNearestFood()) if gameState.getDistanceNearestFood()!=None else ',-1']+
+                    [','+str(gameState.getNumFood())]+
+                    [','+str(gameState.getScore())]+
+                    [','+gameState.data.agentStates[0].getDirection()])[1:]
+
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     "An agent controlled by the keyboard that displays beliefs about ghost positions."
 
@@ -122,16 +133,6 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     def chooseAction(self, gameState):
         return KeyboardAgent.getAction(self, gameState)
 
-    def printLineData(self, gameState):
-        legalActions = gameState.getLegalPacmanActions()
-        return ''.join([',' + str(x) for x in gameState.getPacmanPosition()] + 
-                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West', 'Stop']]+
-                    [','+str(i[0])+','+str(i[1]) for i in gameState.getGhostPositions()]+
-                    [','+str(i) if i != None or i == 0 else ',-1' for i in gameState.data.ghostDistances]+
-                    [','+str(gameState.getDistanceNearestFood()) if gameState.getDistanceNearestFood()!=None else ',-1']+
-                    [','+str(gameState.getNumFood())]+
-                    [','+str(gameState.getScore())]+
-                    [','+gameState.data.agentStates[0].getDirection()])[1:]
 
 from distanceCalculator import Distancer
 from game import Actions
@@ -292,20 +293,6 @@ class BasicAgentAA(BustersAgent):
         if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
         return self.behavior1(gameState)
     
-
-
-    def printLineData(self, gameState):
-        legalActions = gameState.getLegalPacmanActions()
-        
-        return ''.join([str(self.countActions)]+
-                    [','+str(x) for x in gameState.getPacmanPosition()] + 
-                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West', 'Stop']]+
-                    [','+gameState.data.agentStates[0].getDirection()]+
-                    [','+str(i[0])+','+str(i[1]) for i in gameState.getGhostPositions()]+
-                    [','+str(i) for i in gameState.data.ghostDistances]+
-                    [','+str(gameState.getDistanceNearestFood())]+
-                    [','+str(gameState.getNumFood())]+
-                    [','+str(gameState.getScore())])
 
 
     def behavior1(self, gameState):

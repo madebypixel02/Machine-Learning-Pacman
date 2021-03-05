@@ -619,32 +619,62 @@ class Game(object):
         numAgents = len( self.agents )
         step = 0
 
-        header = 'Round,PacX,PacY,LegalNorth,LegalSouth,LegalEast,LegalWest,LegalStop,Direction,Gosth1x,Gosth1y,Ghost2x,Ghost2y,Ghost3x,Ghost3y,Ghost4x,Ghost4y,Ghost1d,Ghost2d,Ghost3d,Ghots4d,NearestFoodDistance,NumberOfFood,Score\n'
-        
-        filename = 'paco.csv'
+        #header = 'Round,PacX,PacY,LegalNorth,LegalSouth,LegalEast,LegalWest,LegalStop,Direction,Gosth1x,Gosth1y,Ghost2x,Ghost2y,Ghost3x,Ghost3y,Ghost4x,Ghost4y,Ghost1d,Ghost2d,Ghost3d,Ghots4d,NearestFoodDistance,NumberOfFood,Score\n'
+        header = ['@relation pacman_data',
+                 '',
+                 '@attribute PacX numeric',
+                 '@attribute PacY numeric',
+                 '@attribute LegalNorth {1,0}',
+                 '@attribute LegalSouth {1,0}',
+                 '@attribute LegalEast {1,0}',
+                 '@attribute LegalWest {1,0}',
+                 '@attribute LegalStop {1,0}',
+                 '@attribute Gosth1x numeric',
+                 '@attribute Gosth1y numeric',
+                 '@attribute Gosth2x numeric',
+                 '@attribute Gosth2y numeric',
+                 '@attribute Gosth3x numeric',
+                 '@attribute Gosth3y numeric',
+                 '@attribute Gosth4x numeric',
+                 '@attribute Gosth4y numeric',
+                 '@attribute DistGosth1 numeric',
+                 '@attribute DistGosth2 numeric',
+                 '@attribute DistGosth3 numeric',
+                 '@attribute DistGosth4 numeric',
+                 '@attribute NearestFoodDist numeric',
+                 '@attribute NumOfFood numeric',
+                 '@attribute Score numeric',
+                 '@attribute Direction {North, South, East, West, Stop}',
+                 '',
+                 '@data']
+
+        filename = 'all_data_pacman.arff'
         try:
             f = open(file = filename, mode='r')
-            f.close
+            f.close()
         except:
-            f = open(filename, mode = 'w')
-            f.write(header + '\n')
+            f = open(filename, mode = 'a')
+            for line in header: f.write(line + '\n')
             f.close()
         finally:
             f = open(filename,mode = 'r')
             try:
-                if f.readline(1)!= header:
-                    raise EOFError 
+                # taking out the /n of the first line
+                if f.readlines(1)[0][:-1] != header[0]:  raise EOFError 
+
             except:
                 f.close()
-                f = open(filename, mode = 'w')
-                f.write(header + '\n')
+                f = open(filename, mode = 'a')
+                for line in header: f.write(line + '\n')
                 f.close()
                 
-        f = open(file = filename, mode = 'a')
         
-        while not self.gameOver:
+        f = open(file = filename, mode = 'a')
+        remainingLogs = 10
+        while not self.gameOver and remainingLogs >0:
+            if self.gameOver: remainingLogs -=1
             # Fetch the next agent
-            agent = self.agents[agentIndex]
+            agent = self.agents[agentIndex] 
             move_time = 0
             skip_action = False
                 
@@ -670,6 +700,9 @@ class Game(object):
                 self.unmute()
             else:
                 observation = self.state.deepCopy()
+
+            if agentIndex == 0:
+                f.write(agent.printLineData(observation).join(' \n'))
             # Solicit an action
             action = None
             step += 1
@@ -719,9 +752,7 @@ class Game(object):
             else:
                 action = agent.getAction(observation)
 
-                # The pacman basic agent is the only one who has this method
-                if 'BasicAgent' in str(type(agent)):
-                    f.write(agent.printLineData(observation).join(' \n'))
+               
                     
             self.unmute()
             

@@ -65,6 +65,9 @@ class KeyboardInference(inference.InferenceModule):
     def getBeliefDistribution(self):
         return self.beliefs
 
+    
+
+
 
 class BustersAgent(object):
     "An agent that tracks and displays its beliefs about ghost positions."
@@ -87,7 +90,7 @@ class BustersAgent(object):
     def observationFunction(self, gameState):
         "Removes the ghost states from the gameState"
         agents = gameState.data.agentStates
-        gameState.data.agentStates = [agents[0]] + [None for i in range(1, len(agents))]
+        gameState.data.agentStates = [agents[0]] + [None for i in range(0, len(agents))]
         return gameState
 
     def getAction(self, gameState):
@@ -118,6 +121,17 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
 
     def chooseAction(self, gameState):
         return KeyboardAgent.getAction(self, gameState)
+
+    def printLineData(self, gameState):
+        legalActions = gameState.getLegalPacmanActions()
+        return ''.join([',' + str(x) for x in gameState.getPacmanPosition()] + 
+                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West', 'Stop']]+
+                    [','+str(i[0])+','+str(i[1]) for i in gameState.getGhostPositions()]+
+                    [','+str(i) if i != None or i == 0 else ',-1' for i in gameState.data.ghostDistances]+
+                    [','+str(gameState.getDistanceNearestFood()) if gameState.getDistanceNearestFood()!=None else ',-1']+
+                    [','+str(gameState.getNumFood())]+
+                    [','+str(gameState.getScore())]+
+                    [','+gameState.data.agentStates[0].getDirection()])[1:]
 
 from distanceCalculator import Distancer
 from game import Actions
@@ -277,6 +291,8 @@ class BasicAgentAA(BustersAgent):
         if   ( move_random == 2 ) and Directions.NORTH in legal:   move = Directions.NORTH
         if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
         return self.behavior1(gameState)
+    
+
 
     def printLineData(self, gameState):
         legalActions = gameState.getLegalPacmanActions()
@@ -308,7 +324,6 @@ class BasicAgentAA(BustersAgent):
 
         # Tends to keep going where it was going
         
-        print(len(legalDirection))
         if len(legalDirection) <=3 and len(legalDirection) > 1:
             
             try: 
@@ -364,9 +379,8 @@ class BasicAgentAA(BustersAgent):
         move = random.choices(directions, importance)[0]
         self.lastMove = move
 
-        print(importance, move)
-
         return move
         
     def behavior2(self, gameState):
         pass
+

@@ -1,0 +1,7 @@
+venv
+*.csv
+settings.json
+*.pyc
+__pycache__
+.vscode
+list

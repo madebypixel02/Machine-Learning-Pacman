@@ -1,0 +1,103 @@
+training_keyboard.arff
+    default layer aprox 500 
+        random ghost
+        static ghost
+
+    classic aprox 500
+        random 250
+        static 250
+    
+    bighunt
+        random 300
+        static 200
+    
+    trickyClassic
+        random 300
+        static 200
+    
+    newmap
+        random 350
+        static 150
+
+test_samemaps_keyboard.arff
+    default
+        random 100
+        static 100
+
+    classic
+        random 150
+        static 50
+    
+    bighunt
+        random 100
+        static 100
+    
+    trickyClassic
+        random 100
+        static 100
+
+    newmap
+        random
+        static
+    
+test_othermpas_keyboard.arff
+    trappedClassic
+        random 100
+        static 100
+    20Hunt
+        random 100
+        static 100
+
+    capsuleClassic
+        random 100
+        static 100
+
+    smallHunt
+        random 100
+        static 100 
+
+    openClassic
+        random 100
+        static 100
+
+training_tutorial1
+    default layer aprox 500 
+        random ghost
+        static ghost
+
+    classic aprox 500
+        random 250
+        static 250
+    
+    bighunt
+        random 300
+        static 200
+    
+    trickyClassic
+        random 300
+        static 200
+    
+    newmap
+        random 350
+        static 150
+
+test_samemaps_tutorial1
+    default layer aprox 500 
+        random ghost
+        static ghost
+
+    classic aprox 500
+        random 250
+        static 250
+    
+    bighunt
+        random 300
+        static 200
+    
+    trickyClassic
+        random 300
+        static 200
+    
+    newmap
+        random 350
+        static 150

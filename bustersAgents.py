@@ -1,4 +1,5 @@
 from __future__ import print_function
+from wekaI import Weka
 # bustersAgents.py
 # ----------------
 # Licensing Information:  You are free to use or extend these projects for
@@ -77,6 +78,8 @@ class BustersAgent(object):
         self.inferenceModules = [inferenceType(a) for a in ghostAgents]
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
+        self.countActions = 0
+        
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -86,6 +89,7 @@ class BustersAgent(object):
             inference.initialize(gameState)
         self.ghostBeliefs = [inf.getBeliefDistribution() for inf in self.inferenceModules]
         self.firstMove = True
+        self.lastGameState = gameState
 
     def observationFunction(self, gameState):
         "Removes the ghost states from the gameState"
@@ -94,31 +98,43 @@ class BustersAgent(object):
         return gameState
 
     def getAction(self, gameState):
-        "Updates beliefs, then chooses an action based on updated beliefs."
-        #for index, inf in enumerate(self.inferenceModules):
-        #    if not self.firstMove and self.elapseTimeEnable:
-        #        inf.elapseTime(gameState)
-        #    self.firstMove = False
-        #    if self.observeEnable:
-        #        inf.observeState(gameState)
-        #    self.ghostBeliefs[index] = inf.getBeliefDistribution()
-        #self.display.updateDistributions(self.ghostBeliefs)
-        return self.chooseAction(gameState)
+        """
+        Modified in order to append the data into a file and to return a choosen move
+        Args:
+            gameState: The default observation
+            f: The where we are appening the lines
+
+        Returns:
+            Returns a legal action
+        """
+
+        # Get the move
+        self.prediction = {
+            'prevScore':gameState.getScore(),
+            'action':self.chooseAction(gameState)
+            }
+        return self.prediction['action']
 
     def chooseAction(self, gameState):
         "By default, a BustersAgent just stops.  This should be overridden."
         return Directions.STOP
 
     def printLineData(self, gameState):
-        legalActions = gameState.getLegalPacmanActions()
-        return ''.join([',' + str(x) for x in gameState.getPacmanPosition()] + 
-                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West', 'Stop']]+
-                    [','+str(i[0])+','+str(i[1]) for i in gameState.getGhostPositions()]+
-                    [','+str(i) if i != None or i == 0 else ',-1' for i in gameState.data.ghostDistances]+
-                    [','+str(gameState.getDistanceNearestFood()) if gameState.getDistanceNearestFood()!=None else ',-1']+
-                    [','+str(gameState.getNumFood())]+
+
+        legalActions = self.lastGameState.getLegalPacmanActions()[:-1]
+
+        s = ''.join([',' + str(x) for x in self.lastGameState.getPacmanPosition()] + 
+                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
+                    [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
+                    [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+
+                    [','+str(self.lastGameState.getDistanceNearestFood()) if self.lastGameState.getDistanceNearestFood()!=None else ',-1']+
+                    [','+str(self.lastGameState.getNumFood())]+
+                    [','+str(self.lastGameState.getScore())]+
                     [','+str(gameState.getScore())]+
-                    [','+gameState.data.agentStates[0].getDirection()])[1:]
+                    [','+self.prediction['action']])[1:]
+        self.lastGameState = gameState
+        return s
+    
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     "An agent controlled by the keyboard that displays beliefs about ghost positions."
@@ -222,11 +238,29 @@ class GreedyBustersAgent(BustersAgent):
         return Directions.EAST
 
 import random
+from stack import Stack
 class BasicAgentAA(BustersAgent):
     def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
-        self.countActions = 0
+        self.targetDirections = Stack() 
+        self.targetPositions = Stack()
+        self.weka = Weka()
+        self.weka.start_jvm()
+
+        defaultIndices = [2,0,1,3]
+        self.phantomIndices = []
+        counter = 0
+        i = -1
+        while(counter <4 and i != 0):
+            print('1: blue, 2: red, 3:cian, 4:orange, 0: default order')
+            i = int(input('Select the position %d: '%(counter+1)))
+            self.phantomIndices.append(i-1)
+            counter += 1
+
+        if i == 0: self.phantomIndices = defaultIndices.copy()
+
+
         
     ''' Example of counting something'''
     def countFood(self, gameState):
@@ -249,6 +283,7 @@ class BasicAgentAA(BustersAgent):
         return table
 
     def printInfo(self, gameState):
+       
         
         print("---------------- TICK ", self.countActions, " --------------------------")
         # Map size
@@ -284,90 +319,257 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        move = Directions.STOP
-        legal = gameState.getLegalActions(0) ##Legal position from the pacman
-        move_random = random.randint(0, 3)
-        if   ( move_random == 0 ) and Directions.WEST in legal:  move = Directions.WEST
-        if   ( move_random == 1 ) and Directions.EAST in legal: move = Directions.EAST
-        if   ( move_random == 2 ) and Directions.NORTH in legal:   move = Directions.NORTH
-        if   ( move_random == 3 ) and Directions.SOUTH in legal: move = Directions.SOUTH
-        return self.behavior1(gameState)
-    
+        return self.behavior3(gameState)
 
+    def behavior2(self, gameState):
+        legalActions = gameState.getLegalPacmanActions()[:-1]
+
+        s = [x for x in gameState.getPacmanPosition()]
+
+        s += ['1'if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
+        for i in gameState.getGhostPositions():
+            s+=[i[0],i[1]]
+        s += [i if i != None or i == 0 else -1 for i in self.lastGameState.data.ghostDistances]
+        s += [self.lastGameState.getDistanceNearestFood() if self.lastGameState.getDistanceNearestFood()!=None else -1]
+        s += [self.lastGameState.getNumFood()]
+        s += [self.lastGameState.getScore()]
+        s += [gameState.getScore()]
+        return self.weka.predict('./datasets/models/testModel.model',s,'./datasets/training_tutorial1.arff')
 
     def behavior1(self, gameState):
-        self.countActions = self.countActions + 1
-        distances = gameState.data.ghostDistances
-        legalDirection = gameState.getLegalActions()
-        livingGhosts = gameState.getLivingGhosts()
-        directions = ['North', 'South', 'East', 'West']
-        importance = [0,0,0,0] # [North, South, East, West]
-        weights = [1.5,0.6,0.6,0.3] # [Priority, second Priority, third priority, last priority]
-        indexes = []
+        # Split Pacman coordinates for ease of use
+        pacmanPosition = gameState.getPacmanPosition()
+        pacx = pacmanPosition[0]
+        pacy = pacmanPosition[1]
 
-        # Gets the indexes of the living ghosts
-        for i,alive in  zip(range(0,5), livingGhosts):
-            if alive: indexes.append(i-1)
-
-        # Tends to keep going where it was going
+        pacmanDirection = gameState.data.agentStates[0].getDirection()
+        legal = gameState.getLegalActions(0) # Legal position from the pacman
         
-        if len(legalDirection) <=3 and len(legalDirection) > 1:
-            
-            try: 
-                if self.lastMove in legalDirection:
-                    return self.lastMove
-
-            except: pass
-            
-        # Gets the index of the closest ghost
-        idx = random.choice(indexes)
-        for i in indexes: 
-            if distances[i] < distances[idx]: idx=i
+        # Define new legal actions that don't allow Pacman to stop or go in the opposite direction
+        legal.remove("Stop")
+        if len(legal) > 1:
+            if pacmanDirection == "North":
+                legal.remove("South")
+            elif pacmanDirection == "South":
+                legal.remove("North")
+            if pacmanDirection == "East":
+                legal.remove("West")
+            elif pacmanDirection == "West":
+                legal.remove("East")
         
-        # Get x and y coordinates from pacman and the closest ghost
-        targetPosX, targetPosY = gameState.getGhostPositions()[idx]
-        currentPosX, currentPosY = gameState.getPacmanPosition()
-
-        # Difference of x and y coordinates
-        dx = targetPosX-currentPosX
-        dy = targetPosY-currentPosY
+        move = "Stop" # Define "Stop" as the default action
         
-        # Giving a weight at each directio
-        if dy < 0: # Must go south
-            importance[1] += weights[0]
-            importance[2] += weights[1]
-            importance[3] += weights[2]
-            importance[0] += weights[3]
-        elif dy > 0: # Must go north
-            importance[0] += weights[0]
-            importance[2] += weights[1]
-            importance[3] += weights[2]
-            importance[1] += weights[3]
+        #print("Smart Legal Actions:", legal)
+        ghostAlive = False
+        i = 1
+        while not ghostAlive:
+            ghostAlive = gameState.getLivingGhosts()[i]
+            targetPosition = gameState.getGhostPositions()[i]
+            i += 1
+         # Get the position of the nearest ghost
+        #print("Current Target:", targetPosition)
+        
+        if targetPosition[1] != pacy or targetPosition[0] != pacx: # Focuse on the closest ghost until he eats it
+            if len(legal) == 1 or self.countActions == 1: # Define movement were he can only go in one direction (corridors or dead ends)
+                move = legal[0]
+                
 
-        if dx < 0: # Must go west
-            importance[3] += weights[0]
-            importance[0] += weights[1]
-            importance[1] += weights[2]
-            importance[2] += weights[3]
-        elif dx > 0: # Must go east
-            importance[2] += weights[0]
-            importance[0] += weights[1]
-            importance[1] += weights[2]
-            importance[3] += weights[3]
+            if len(legal) == 2: # Define rules for forks with 2 exits, computing the distance to the nearest ghosts from the diferent directions Pacman can move to
+                possible_distances = []
+                for i in legal:
+                    if i == "North":
+                        possible_distances.append(gameState.getDistanceNearestGhost(pacx,pacy + 1)[0])
+                    if i == "South":
+                        possible_distances.append(gameState.getDistanceNearestGhost(pacx,pacy - 1)[0])
+                    if i == "East":
+                        possible_distances.append(gameState.getDistanceNearestGhost(pacx + 1,pacy)[0])
+                    if i == "West":
+                        possible_distances.append(gameState.getDistanceNearestGhost(pacx - 1,pacy)[0])
 
+                distance_criterion = legal[possible_distances.index(min(possible_distances))] # Choose the move that takes him closer to a ghost
+                move = distance_criterion
 
-        for direction, i in zip(directions, range(4)):
-            if not direction in legalDirection: importance[i] = 0
+            if len(legal) >= 3: # For 3 possible exits, it usually means that the map is more open and thus he can move to the closest ghost more freely
+                if pacy < targetPosition[1] and "North" in legal:
+                    move = "North"
+                elif pacy > targetPosition[1] and "South" in legal:
+                    move = "South"
+                if pacx < targetPosition[0] and "East" in legal:
+                    move = "East"
+                if pacx > targetPosition[0] and "West" in legal:
+                    move = "West"
+                elif move == "Stop" and pacmanDirection in legal:
+                    move = pacmanDirection
+
+            choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
+            if pacmanDirection in legal:
+                choices.append(pacmanDirection)
+                for _ in range(5):
+                    choices.append(move)
             
-            try:
-                if self.lastImportance[i] == 0: importance[i] *= 0.6
-            except: self.lastImportance = [1,1,1,1]
+            move = random.choice(choices)
+        return move
 
-        move = random.choices(directions, importance)[0]
-        self.lastMove = move
+    def behavior3(self, gameState):
+        maps = gameState.getWalls()
+        pacX,pacY = gameState.getPacmanPosition()
+        legalActions = gameState.getLegalActions(0)
+        
 
+
+
+        ghostAlive = False
+        i = 0
+        while not ghostAlive and self.targetPositions.isempty():
+            ghostAlive = gameState.getLivingGhosts()[self.phantomIndices[i]+1]
+            
+            targetPosition = [0,0]
+            targetPosition[0] = gameState.getGhostPositions()[self.phantomIndices[i]][0]
+            targetPosition[1] = gameState.getGhostPositions()[self.phantomIndices[i]][1]
+            print(gameState.getGhostPositions())
+            print(self.phantomIndices)
+            i += 1
+            
+            
+
+
+
+        
+        if not self.targetPositions.isempty():
+            targetPosition = list(self.targetPositions.getUp())
+            print(' Inserting target position', targetPosition)
+            print(self.targetPositions)
+           
+        
+        move = 'Nothing'
+        targetDirection = gameState.getGhostDirections().get(i)
+        
+        iterations = 0
+        while move not in legalActions:
+            iterations += 1
+
+            # Predicts the position of the target based on its direction
+            
+
+            moves = [move, move]
+            if targetPosition[0] < pacX:
+                moves[0] = 'West'
+            elif targetPosition[0] > pacX:
+                moves[0] = 'East'
+            
+            if targetPosition[1] < pacY:
+                moves[1] = 'South'
+            elif targetPosition[1] > pacY:
+                moves[1] = 'North'
+            
+
+
+            
+            if iterations > 3:
+                move = random.choice(legalActions)
+            else:
+                if moves[0] not in legalActions:
+                    move = moves[1]
+                else:
+                    move = moves[0]
+
+            
+
+            if moves[0] == 'Nothing' and moves[1] == 'Nothing':
+                move = self.targetDirections.extract()
+                self.targetPositions.extract()
+                
+                print('Arrived target', self.targetPositions)
+            
+
+            
+            if move not in legalActions:    
+                if move == 'Nothing':
+                    move = moves[0]
+                    
+                
+                if iterations == 1:
+                    self.targetDirections.insert(move)
+                    self.targetPositions.insert(targetPosition)
+                    print('If target positions', self.targetPositions)
+                print('Not legal', move)
+                
+
+                temp = []
+                indx = []
+                counter = 0
+                if move == 'South':
+                    
+                    while counter < maps.width:
+                        if not maps[counter][pacY-1]:
+                            temp.append(abs(pacX-counter))
+                            indx.append(counter)
+                        counter += 1
+                    
+                    minDist = min(temp)
+                    classified = []
+                    for j in range(len(temp)):
+                        if minDist + 2 >= temp[j]:
+                            classified.append(indx[j])
+                    indx = classified
+
+                    targetPosition[0] = random.choice(indx)
+                    targetPosition[1] = pacY
+
+                elif move == 'North':
+                    
+                    while counter < maps.width:
+                        if not maps[counter][pacY+1]:
+                            temp.append(abs(pacX-counter))
+                            indx.append(counter)
+                        counter += 1
+                    
+                    minDist = min(temp)
+                    classified = []
+                    for j in range(len(temp)):
+                        if minDist + 2 >= temp[j]:
+                            classified.append(indx[j])
+                    indx = classified
+
+                    targetPosition[0] = random.choice(indx)
+                    targetPosition[1] = pacY
+
+                elif move == 'East':
+                    
+                    while counter < maps.height:
+                        if not maps[pacX+1][counter]:
+                            temp.append(abs(pacY-counter))
+                            indx.append(counter)
+                            print('counter', counter)
+                        counter += 1
+
+                    minDist = min(temp)
+                    classified = []
+                    for j in range(len(temp)):
+                        if minDist + 2 >= temp[j]:
+                            classified.append(indx[j])
+                    indx = classified
+
+                    
+                    
+                    targetPosition[0] = pacX
+                    targetPosition[1] = random.choice(indx)
+
+                    
+                elif move == 'West':
+                    while counter < maps.height:
+                        if not maps[pacX-1][counter]:
+                            temp.append(abs(pacY-counter))
+                            indx.append(counter)
+                        counter += 1
+
+                    minDist = min(temp)
+                    classified = []
+                    for j in range(len(temp)):
+                        if minDist + 2 >= temp[j]:
+                            classified.append(indx[j])
+                    indx = classified
+                    targetPosition[0] = pacX
+                    targetPosition[1] = random.choice(indx)            
         return move
         
-    def behavior2(self, gameState):
-        pass
-

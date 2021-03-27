@@ -127,6 +127,7 @@ class BustersAgent(object):
                     [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
                     [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
                     [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+
+					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(0, self.lastGameState.getNumAgents() - 1)]+
                     [','+str(self.lastGameState.getDistanceNearestFood()) if self.lastGameState.getDistanceNearestFood()!=None else ',-1']+
                     [','+str(self.lastGameState.getNumFood())]+
                     [','+str(self.lastGameState.getScore())]+
@@ -252,8 +253,8 @@ class BasicAgentAA(BustersAgent):
         self.phantomIndices = []
         counter = 0
         i = -1
-        while(counter <4 and i != 0):
-            print('1: blue, 2: red, 3:cian, 4:orange, 0: default order')
+        while(counter < 4 and i != 0):
+            print('1: blue, 2: red, 3:cyan, 4:orange, 0: default order')
             i = int(input('Select the position %d: '%(counter+1)))
             self.phantomIndices.append(i-1)
             counter += 1

@@ -628,7 +628,7 @@ class Game(object):
         
         f = open(filename, mode = 'a')
         if needHeader:
-            header = ['@relation pacman_data',
+            header = [f'@relation {filename}',
                  '',
                  '@attribute PacX numeric',
                  '@attribute PacY numeric',
@@ -649,6 +649,10 @@ class Game(object):
                  '@attribute DistGosth2 numeric',
                  '@attribute DistGosth3 numeric',
                  '@attribute DistGosth4 numeric',
+				 '@attribute GhostDir1 {North, South, East, West, Stop}',
+				 '@attribute GhostDir2 {North, South, East, West, Stop}',
+				 '@attribute GhostDir3 {North, South, East, West, Stop}',
+				 '@attribute GhostDir4 {North, South, East, West, Stop}',
                  '@attribute NearestFoodDist numeric',
                  '@attribute NumOfFood numeric',
                  '@attribute Score numeric',

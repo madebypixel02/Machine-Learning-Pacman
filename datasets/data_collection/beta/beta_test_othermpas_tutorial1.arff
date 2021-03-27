@@ -1,4 +1,4 @@
-@relation 'test_othermpas_tutorial1.arff-weka.filters.unsupervised.attribute.Remove-R23-26-weka.filters.unsupervised.attribute.AddExpression-E(a7+a9+a11+a13)/4-NmeanGhostx-weka.filters.unsupervised.attribute.AddExpression-E(a8+a10+a12+a14)/4-NmeanGhosty-weka.filters.unsupervised.attribute.AddExpression-E(a15+a16+a17+a18)/4-NmeanDist-weka.filters.unsupervised.attribute.Reorder-R1-22,24-26,23'
+@relation 'beta_test_othermpas_tutorial1.arff-weka.filters.unsupervised.attribute.Remove-R23-26-weka.filters.unsupervised.attribute.AddExpression-E(a7+a9+a11+a13)/4-NmeanGhostx-weka.filters.unsupervised.attribute.AddExpression-E(a8+a10+a12+a14)/4-NmeanGhosty-weka.filters.unsupervised.attribute.AddExpression-E(a15+a16+a17+a18)/4-NmeanDist-weka.filters.unsupervised.attribute.Reorder-R1-22,24-26,23'
 
 @attribute PacX numeric
 @attribute PacY numeric

@@ -1,4 +1,4 @@
-@relation training_tutorial1.arff-weka.filters.unsupervised.attribute.Remove-R23-26
+@relation alpha_training_tutorial1.arff-weka.filters.unsupervised.attribute.Remove-R23-26
 
 @attribute PacX numeric
 @attribute PacY numeric

@@ -127,7 +127,7 @@ class BustersAgent(object):
                     [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
                     [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
                     [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+
-					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(0, self.lastGameState.getNumAgents() - 1)]+
+					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(4)]+
                     [','+str(self.lastGameState.getDistanceNearestFood()) if self.lastGameState.getDistanceNearestFood()!=None else ',-1']+
                     [','+str(self.lastGameState.getNumFood())]+
                     [','+str(self.lastGameState.getScore())]+
@@ -303,7 +303,7 @@ class BasicAgentAA(BustersAgent):
         # Ghosts positions
         print("Ghosts positions: ", gameState.getGhostPositions())
         # Ghosts directions
-        print("Ghosts directions: ", [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)])
+        print("Ghosts directions: ", [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 2)])
         # Manhattan distance to ghosts
         print("Ghosts distances: ", gameState.data.ghostDistances)
         # Pending pac dots

@@ -124,10 +124,10 @@ class GameState(object):
         if agentIndex == 0:
             state.data.scoreChange += -TIME_PENALTY # Penalty for waiting around
         else:
-            GhostRules.decrementTimer( state.data.agentStates[agentIndex] )
+            GhostRules.decrementTimer( state.data.agentStates[agentIndex])
 
         # Resolve multi-agent effects
-        GhostRules.checkDeath( state, agentIndex )
+        GhostRules.checkDeath( state, agentIndex)
 
         # Check food eaten
         GhostRules.checkFoodEaten ( state, agentIndex )

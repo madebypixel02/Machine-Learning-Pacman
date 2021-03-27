@@ -621,7 +621,7 @@ class Game(object):
 
         # Writting file
         path = 'datasets/data_collection/'
-        filename = 'training keyboard.arff'
+        filename = 'training_keyboard.arff'
         needHeader = False
         if not os.path.isfile(f'{path}{filename}'):
             needHeader = True
@@ -637,7 +637,6 @@ class Game(object):
                  '@attribute LegalSouth {1,0}',
                  '@attribute LegalEast {1,0}',
                  '@attribute LegalWest {1,0}',
-                 '@attribute LegalStop {1,0}',
                  '@attribute Gosth1x numeric',
                  '@attribute Gosth1y numeric',
                  '@attribute Gosth2x numeric',
@@ -650,15 +649,15 @@ class Game(object):
                  '@attribute DistGosth2 numeric',
                  '@attribute DistGosth3 numeric',
                  '@attribute DistGosth4 numeric',
-				 '@attribute GhostDir1 {North, South, East, West, Stop}',
-				 '@attribute GhostDir2 {North, South, East, West, Stop}',
-				 '@attribute GhostDir3 {North, South, East, West, Stop}',
-				 '@attribute GhostDir4 {North, South, East, West, Stop}',
+				 '@attribute GhostDir1 {North,South,East,West,Stop}',
+				 '@attribute GhostDir2 {North,South,East,West,Stop}',
+				 '@attribute GhostDir3 {North,South,East,West,Stop}',
+				 '@attribute GhostDir4 {North,South,East,West,Stop}',
                  '@attribute NearestFoodDist numeric',
                  '@attribute NumOfFood numeric',
                  '@attribute Score numeric',
                  '@attribute NextScore numeric',
-                 '@attribute Direction {North, South, East, West, Stop}',
+				 '@attribute Direction {North,South,East,West,Stop}',
                  '',
                  '@data']
 

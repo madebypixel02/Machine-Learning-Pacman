@@ -1,5 +1,5 @@
 training_keyboard.arff
-    default layer aprox 500 
+    default layerout aprox 500 
         random ghost
         static ghost
 

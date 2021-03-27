@@ -123,7 +123,7 @@ class BustersAgent(object):
 
         legalActions = self.lastGameState.getLegalPacmanActions()[:-1]
 
-        s = ''.join([',' + str(x) for x in self.lastGameState.getPacmanPosition()] + 
+        s = ''.join([',' + str(x) for x in self.lastGameState.getPacmanPosition()]+
                     [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
                     [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
                     [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+

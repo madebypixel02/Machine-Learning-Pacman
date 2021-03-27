@@ -616,17 +616,18 @@ class Game(object):
                 self.unmute()
 
         agentIndex = self.startingIndex
-        numAgents = len( self.agents )
+        numAgents = len( self.agents)
         step = 0
 
         # Writting file
-        filename = 'test_othermaps_tutorial1.arff'
+        path = 'datasets/data_collection/'
+        filename = 'training keyboard.arff'
         needHeader = False
-        if not os.path.isfile(filename):
+        if not os.path.isfile(f'{path}{filename}'):
             needHeader = True
             print('This file did not exist')
         
-        f = open(filename, mode = 'a')
+        f = open(f'{path}{filename}', mode = 'a')
         if needHeader:
             header = [f'@relation {filename}',
                  '',
@@ -663,7 +664,7 @@ class Game(object):
 
             for line in header: f.write(line + '\n')
         
-        f = open(file = filename, mode = 'a')
+        f = open(file = f'{path}{filename}', mode = 'a')
         remainingLogs = 10
 
         firstIteration = True

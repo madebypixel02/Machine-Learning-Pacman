@@ -621,7 +621,7 @@ class Game(object):
 
         # Writting file
         path = 'datasets/data_collection/'
-        filename = 'test_samemaps_tutorial1.arff'
+        filename = 'test_othermpas_tutorial1.arff'
         needHeader = False
         if not os.path.isfile(f'{path}{filename}'):
             needHeader = True

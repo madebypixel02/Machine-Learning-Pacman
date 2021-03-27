@@ -66,9 +66,6 @@ class KeyboardInference(inference.InferenceModule):
     def getBeliefDistribution(self):
         return self.beliefs
 
-    
-
-
 
 class BustersAgent(object):
     "An agent that tracks and displays its beliefs about ghost positions."
@@ -127,12 +124,13 @@ class BustersAgent(object):
                     [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
                     [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
                     [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+
-					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(0, self.lastGameState.getNumAgents() - 1)]+
+					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(4)]+
                     [','+str(self.lastGameState.getDistanceNearestFood()) if self.lastGameState.getDistanceNearestFood()!=None else ',-1']+
                     [','+str(self.lastGameState.getNumFood())]+
                     [','+str(self.lastGameState.getScore())]+
                     [','+str(gameState.getScore())]+
                     [','+self.prediction['action']])[1:]
+
         self.lastGameState = gameState
         return s
     
@@ -244,11 +242,12 @@ class BasicAgentAA(BustersAgent):
     def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
-        self.targetDirections = Stack() 
+        self.targetDirections = Stack()
         self.targetPositions = Stack()
         self.weka = Weka()
         self.weka.start_jvm()
-
+        
+        
         defaultIndices = [2,0,1,3]
         self.phantomIndices = []
         counter = 0
@@ -303,7 +302,7 @@ class BasicAgentAA(BustersAgent):
         # Ghosts positions
         print("Ghosts positions: ", gameState.getGhostPositions())
         # Ghosts directions
-        print("Ghosts directions: ", [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)])
+        print("Ghosts directions: ", [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 2)])
         # Manhattan distance to ghosts
         print("Ghosts distances: ", gameState.data.ghostDistances)
         # Pending pac dots
@@ -417,8 +416,6 @@ class BasicAgentAA(BustersAgent):
         legalActions = gameState.getLegalActions(0)
         
 
-
-
         ghostAlive = False
         i = 0
         while not ghostAlive and self.targetPositions.isempty():
@@ -427,19 +424,12 @@ class BasicAgentAA(BustersAgent):
             targetPosition = [0,0]
             targetPosition[0] = gameState.getGhostPositions()[self.phantomIndices[i]][0]
             targetPosition[1] = gameState.getGhostPositions()[self.phantomIndices[i]][1]
-            print(gameState.getGhostPositions())
-            print(self.phantomIndices)
             i += 1
             
-            
 
-
-
-        
         if not self.targetPositions.isempty():
             targetPosition = list(self.targetPositions.getUp())
-            print(' Inserting target position', targetPosition)
-            print(self.targetPositions)
+
            
         
         move = 'Nothing'
@@ -479,28 +469,19 @@ class BasicAgentAA(BustersAgent):
             if moves[0] == 'Nothing' and moves[1] == 'Nothing':
                 move = self.targetDirections.extract()
                 self.targetPositions.extract()
-                
-                print('Arrived target', self.targetPositions)
-            
-
             
             if move not in legalActions:    
                 if move == 'Nothing':
-                    move = moves[0]
-                    
+                    move = moves[0]         
                 
                 if iterations == 1:
                     self.targetDirections.insert(move)
                     self.targetPositions.insert(targetPosition)
-                    print('If target positions', self.targetPositions)
-                print('Not legal', move)
                 
-
                 temp = []
                 indx = []
                 counter = 0
                 if move == 'South':
-                    
                     while counter < maps.width:
                         if not maps[counter][pacY-1]:
                             temp.append(abs(pacX-counter))
@@ -541,7 +522,6 @@ class BasicAgentAA(BustersAgent):
                         if not maps[pacX+1][counter]:
                             temp.append(abs(pacY-counter))
                             indx.append(counter)
-                            print('counter', counter)
                         counter += 1
 
                     minDist = min(temp)
@@ -550,9 +530,6 @@ class BasicAgentAA(BustersAgent):
                         if minDist + 2 >= temp[j]:
                             classified.append(indx[j])
                     indx = classified
-
-                    
-                    
                     targetPosition[0] = pacX
                     targetPosition[1] = random.choice(indx)
 

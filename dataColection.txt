@@ -1,9 +1,9 @@
 training_keyboard.arff
-    default layerout aprox 500 
-        random ghost
-        static ghost
+    default
+        random ghost 250
+        static ghost 250
 
-    classic aprox 500
+    classic
         random 250
         static 250
     
@@ -37,8 +37,8 @@ test_samemaps_keyboard.arff
         static 100
 
     newmap
-        random
-        static
+        random 100
+        static 100
     
 test_othermpas_keyboard.arff
     trappedClassic

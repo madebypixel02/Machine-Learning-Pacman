@@ -1,0 +1,30 @@
+Tester:     weka.experiment.PairedCorrectedTTester -G 4,5,6 -D 1 -R 2 -S 0.05 -result-matrix "weka.experiment.ResultMatrixCSV -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 0 -print-row-names -enum-col-names"
+Analysing:  Percent_correct
+Datasets:   8
+Resultsets: 7
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       3/28/21, 12:41 PM
+
+
+Dataset,[1],[2],'',[3],'',[4],'',[5],'',[6],'',[7],''
+alpha_training_keyboard.a,26.54,50.29,v,47.23,v,44.37,v,45.13,v,48.79,v,54.69,v
+alpha_training_tutorial1.,32.90,56.73,v,52.70,v,51.56,v,50.09,v,56.22,v,60.73,v
+'\'beta_training_keyboard.a',26.54,49.76,v,47.50,v,44.63,v,45.42,v,49.52,v,55.37,v
+'\'beta_training_tutorial1.',32.90,55.82,v,52.70,v,51.71,v,50.27,v,56.75,v,60.89,v
+'\'gamma_training_keyboard.',26.54,54.12,v,54.86,v,51.62,v,49.51,v,52.80,v,58.32,v
+'\'gamma_training_tutorial1',32.90,58.26,v,55.92,v,54.19,v,53.50,v,57.03,v,60.64,v
+training_keyboard.arff,26.54,52.27,v,48.89,v,47.74,v,46.71,v,50.32,v,58.34,v
+training_tutorial1.arff,32.90,58.94,v,53.06,v,53.63,v,51.35,v,58.13,v,63.09,v
+'[v/ /*]','','',[8/0/0],'',[8/0/0],'',[8/0/0],'',[8/0/0],'',[8/0/0],'',[8/0/0]
+
+
+Key,
+[1],'rules.ZeroR \'\' 48055541465867954'
+[2],'trees.J48 \'-C 0.25 -M 2\' -217733168393644444'
+[3],'lazy.IBk \'-K 1 -W 0 -A \\\"weka.core.neighboursearch.LinearNNSearch -A \\\\\\\"weka.core.EuclideanDistance -R first-last\\\\\\\"\\\"\' -3080186098777067172'
+[4],'lazy.IBk \'-K 3 -W 0 -A \\\"weka.core.neighboursearch.LinearNNSearch -A \\\\\\\"weka.core.EuclideanDistance -R first-last\\\\\\\"\\\"\' -3080186098777067172'
+[5],'lazy.IBk \'-K 5 -W 0 -A \\\"weka.core.neighboursearch.LinearNNSearch -A \\\\\\\"weka.core.EuclideanDistance -R first-last\\\\\\\"\\\"\' -3080186098777067172'
+[6],'rules.PART \'-C 0.25 -M 2\' 8121455039782598361'
+[7],'trees.RandomForest \'-P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1\' 1116839470751428698'
+

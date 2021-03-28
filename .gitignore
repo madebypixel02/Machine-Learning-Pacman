@@ -1,5 +1,4 @@
 venv
-*.csv
 settings.json
 *.pyc
 __pycache__

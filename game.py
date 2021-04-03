@@ -783,8 +783,8 @@ class Game(object):
                     boinc.set_fraction_done(self.getProgress())
 
                 firstIteration = False
-        except:
-            pass
+        except Exception as e:
+            print(e)
         finally:
             f.close()
         # inform a learning agent of the game result

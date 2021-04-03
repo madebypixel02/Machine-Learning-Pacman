@@ -20,6 +20,7 @@ import util
 from game import Agent
 from game import Directions
 from keyboardAgents import KeyboardAgent
+import numpy as np
 import inference
 import busters
 
@@ -319,22 +320,27 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior3(gameState)
+        return self.behavior2(gameState)
 
     def behavior2(self, gameState):
         legalActions = gameState.getLegalPacmanActions()[:-1]
+        ghostx = []
+        ghosty = []
 
         s = [x for x in gameState.getPacmanPosition()]
 
-        s += ['1'if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
+        s += ['1' if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
         for i in gameState.getGhostPositions():
+            ghostx.append(i[0])
+            ghosty.append(i[1])
             s+=[i[0],i[1]]
-        s += [i if i != None or i == 0 else -1 for i in self.lastGameState.data.ghostDistances]
-        s += [self.lastGameState.getDistanceNearestFood() if self.lastGameState.getDistanceNearestFood()!=None else -1]
-        s += [self.lastGameState.getNumFood()]
-        s += [self.lastGameState.getScore()]
-        s += [gameState.getScore()]
-        return self.weka.predict('./datasets/models/testModel.model',s,'./datasets/training_tutorial1.arff')
+        s += [i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances]
+        s += [gameState.getDistanceNearestFood() if gameState.getDistanceNearestFood()!=None else -1]
+        s += [gameState.getGhostDirections().get(i) if i != None else "Stop" for i in range(4)]
+        s += [np.mean(ghostx)]
+        s += [np.mean(ghosty)]
+        s += [np.mean([i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances])]
+        return self.weka.predict('./datasets/models/project3_model.model',s,'./datasets/data_collection/beta/beta_training_tutorial1.arff')
 
     def behavior1(self, gameState):
         # Split Pacman coordinates for ease of use

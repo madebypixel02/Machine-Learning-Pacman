@@ -1,0 +1,31 @@
+@relation log.arff
+
+@attribute PacX numeric
+@attribute PacY numeric
+@attribute LegalNorth {1,0}
+@attribute LegalSouth {1,0}
+@attribute LegalEast {1,0}
+@attribute LegalWest {1,0}
+@attribute Gosth1x numeric
+@attribute Gosth1y numeric
+@attribute Gosth2x numeric
+@attribute Gosth2y numeric
+@attribute Gosth3x numeric
+@attribute Gosth3y numeric
+@attribute Gosth4x numeric
+@attribute Gosth4y numeric
+@attribute DistGosth1 numeric
+@attribute DistGosth2 numeric
+@attribute DistGosth3 numeric
+@attribute DistGosth4 numeric
+@attribute GhostDir1 {North,South,East,West,Stop}
+@attribute GhostDir2 {North,South,East,West,Stop}
+@attribute GhostDir3 {North,South,East,West,Stop}
+@attribute GhostDir4 {North,South,East,West,Stop}
+@attribute NearestFoodDist numeric
+@attribute NumOfFood numeric
+@attribute Score numeric
+@attribute NextScore numeric
+@attribute Direction {North,South,East,West,Stop}
+
+@data

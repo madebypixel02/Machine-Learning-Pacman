@@ -1,0 +1,25 @@
+Tester:     weka.experiment.PairedCorrectedTTester -G 4,5,6 -D 1 -R 2 -S 0.05 -result-matrix "weka.experiment.ResultMatrixCSV -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 0 -print-row-names -enum-col-names"
+Analysing:  Root_relative_squared_error
+Datasets:   8
+Resultsets: 2
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       4/3/21, 1:09 PM
+
+
+Dataset,[1],[2],''
+'\'training_keyboard.arff-w',3.13,3.08,' '
+'\'training_tutorial1.arff-',6.91,7.24,v
+'\'training_keyboard.arff-w',3.13,3.08,' '
+'\'training_tutorial1.arff-',6.91,7.26,v
+'\'training_keyboard.arff-w',3.13,3.11,' '
+'\'training_tutorial1.arff-',6.87,7.30,v
+'\'training_keyboard.arff-w',3.13,3.09,' '
+'\'training_tutorial1.arff-',6.89,7.24,v
+'[v/ /*]','','',[4/4/0]
+
+
+Key,
+[1],'trees.M5P \'-M 4.0 -num-decimal-places 4\' -6118439039768244417'
+[2],'functions.LinearRegression \'-S 0 -R 1.0E-8 -num-decimal-places 4\' -3364580862046573747'
+

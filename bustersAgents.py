@@ -346,7 +346,7 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior1(gameState)
+        return self.behavior3(gameState)
 
     # Tutorial 1 pacman
     def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -561,7 +561,27 @@ class BasicAgentAA(BustersAgent):
 
     # Phase 2 predictor   
     def behavior3(self, gameState):
-        pass
+        legalActions = gameState.getLegalPacmanActions()[:-1]
+        ghostx = []
+        ghosty = []
+
+        s = [x for x in gameState.getPacmanPosition()]
+
+        s += ['1' if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
+        for i in gameState.getGhostPositions():
+            ghostx.append(i[0])
+            ghosty.append(i[1])
+            s+=[i[0],i[1]]
+        s += [i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances[1:]]
+        s += [gameState.getDistanceNearestFood() if gameState.getDistanceNearestFood()!=None else -1]
+        s += [gameState.getGhostDirections().get(i) if i != None else "Stop" for i in range(4)]
+        s += [np.mean(ghostx)]
+        s += [np.mean(ghosty)]
+        s += [np.mean([i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances])]
+        print(s)
+        return self.weka.predict('./datasets/models/project3_model.model',s,'./datasets/data_collection/beta/beta_training_tutorial1.arff')
+    
+    # Phase 4 attempt 1
     def behavior4(self, gameState):
         legalActions = gameState.getLegalPacmanActions()[:-1]
         ghostx = []

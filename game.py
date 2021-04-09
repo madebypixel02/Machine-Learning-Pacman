@@ -639,6 +639,7 @@ class Game(object):
                  '@attribute LegalWest {1,0}',
                  '@attribute Gosthx numeric',
                  '@attribute Gosthy numeric',
+				 
                  '@attribute Direction {North,South,East,West,Stop}',
                  '',
                  '@data']

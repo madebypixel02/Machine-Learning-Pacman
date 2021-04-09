@@ -317,7 +317,7 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior2(gameState)
+        return self.behavior1(gameState)
 
     def behavior2(self, gameState):
         legalActions = gameState.getLegalPacmanActions()[:-1]
@@ -326,18 +326,25 @@ class BasicAgentAA(BustersAgent):
         pacmanPosition = gameState.getPacmanPosition()
         pacx = pacmanPosition[0]
         pacy = pacmanPosition[1]
+        positions = self.getGhostPositions() 
+        livingGhosts = self.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
         
         s = [x for x in gameState.getPacmanPosition()]
         
         s += ['1' if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
-        
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True:
+                s += [self.behavior1(gameState, positions[i][0], positions[i][1])]
+            else:
+                s += "Stop"
+
         move = self.weka.predict('./datasets/models/testModel2.model',s,'./datasets/data_collection/log.arff')
         if move in legalActions: return move
         return random.choice(legalActions)
 
-    def behavior1(self, gameState):
+    def behavior1(self, gameState, ghostx = None, ghosty = None):
         
         # Split Pacman coordinates for ease of use
         pacmanPosition = gameState.getPacmanPosition()
@@ -362,8 +369,11 @@ class BasicAgentAA(BustersAgent):
         move = "Stop" # Define "Stop" as the default action
         
         #print("Smart Legal Actions:", legal)
-        targetPosition = gameState.getDistanceNearestGhost(pacx,pacy)[1] # Get the position of the nearest ghost
-        
+        if ghostx == None and ghosty == None:
+            targetPosition = gameState.getDistanceNearestGhost(pacx,pacy)[1] # Get the position of the nearest ghost
+        else:
+            targetPosition = (ghostx,ghosty)
+
         if targetPosition[1] != pacy or targetPosition[0] != pacx: # Focuse on the closest ghost until he eats it
             if len(legal) == 1 or self.countActions == 1: # Define movement were he can only go in one direction (corridors or dead ends)
                 move = legal[0]
@@ -395,12 +405,12 @@ class BasicAgentAA(BustersAgent):
                 elif move == "Stop" and pacmanDirection in legal:
                     move = pacmanDirection
 
-            choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
-            if pacmanDirection in legal:
-                choices.append(pacmanDirection)
-                for _ in range(6):
-                    choices.append(move)
-            move = random.choice(choices)
+            #choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
+            #if pacmanDirection in legal:
+            #    choices.append(pacmanDirection)
+            #    for _ in range(6):
+            #        choices.append(move)
+            #move = random.choice(choices)
                 
 
                 

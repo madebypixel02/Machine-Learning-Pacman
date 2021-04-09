@@ -117,6 +117,24 @@ class BustersAgent(object):
         "By default, a BustersAgent just stops.  This should be overridden."
         return Directions.STOP
 
+    def printLineData(self, gameState):
+
+        legalActions = self.lastGameState.getLegalPacmanActions()[:-1]
+
+        s = ''.join([',' + str(x) for x in self.lastGameState.getPacmanPosition()]+
+                    [',1'if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
+                    [','+str(i[0])+','+str(i[1]) for i in self.lastGameState.getGhostPositions()]+
+                    [','+str(i) if i != None or i == 0 else ',-1' for i in self.lastGameState.data.ghostDistances]+
+					[','+str(self.lastGameState.getGhostDirections().get(i)) for i in range(4)]+
+                    [','+str(self.lastGameState.getDistanceNearestFood()) if self.lastGameState.getDistanceNearestFood()!=None else ',-1']+
+                    [','+str(self.lastGameState.getNumFood())]+
+                    [','+str(self.lastGameState.getScore())]+
+                    [','+str(gameState.getScore())]+
+                    [','+self.prediction['action']])[1:]
+
+        self.lastGameState = gameState
+        return s
+
     
 
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
@@ -300,14 +318,10 @@ class BasicAgentAA(BustersAgent):
         # Score
         print("Score: ", gameState.getScore())
 
-
-    def chooseAction(self, gameState):
-        self.countActions = self.countActions + 1
-        self.printInfo(gameState)
-        return self.behavior1(gameState)
-    
+#PrintLineData
+#----------------------------------------------------------------------------------------------------------------------------------------
     def printLineData(self, gameState):
-        return self.printLineData2(gameState)
+        return self.printLineData1(gameState)
 
     def printLineData1(self, gameState):
         return super().printLineData(gameState)
@@ -327,6 +341,14 @@ class BasicAgentAA(BustersAgent):
         self.lastGameState = gameState
         return s
 
+# Chose Action
+#--------------------------------------------------------------------------------------------------------------------------------------
+    def chooseAction(self, gameState):
+        self.countActions = self.countActions + 1
+        self.printInfo(gameState)
+        return self.behavior1(gameState)
+
+    # Tutorial 1 pacman
     def behavior1(self, gameState, ghostx = None, ghosty = None):
         
         # Split Pacman coordinates for ease of use
@@ -394,18 +416,14 @@ class BasicAgentAA(BustersAgent):
             #    for _ in range(6):
             #        choices.append(move)
             #move = random.choice(choices)
-                
 
-                
-        #print("Selected move:", move)
         return move
 
+    # New tutorial 1 pacman
     def behavior2(self, gameState):
         maps = gameState.getWalls()
         pacX,pacY = gameState.getPacmanPosition()
         legalActions = gameState.getLegalActions(0)
-        
-
         ghostAlive = False
         i = 0
         while not ghostAlive and self.targetPositions.isempty():
@@ -540,8 +558,11 @@ class BasicAgentAA(BustersAgent):
                     targetPosition[0] = pacX
                     targetPosition[1] = random.choice(indx)            
         return move
-        
+
+    # Phase 2 predictor   
     def behavior3(self, gameState):
+        pass
+    def behavior4(self, gameState):
         legalActions = gameState.getLegalPacmanActions()[:-1]
         ghostx = []
         ghosty = []

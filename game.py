@@ -518,6 +518,7 @@ except:
 	_BOINC_ENABLED = False
 
 class Game(object):
+<<<<<<< HEAD
 	"""
 	The Game manages the control flow, soliciting actions from agents.
 	"""
@@ -806,6 +807,130 @@ class Game(object):
                  '@attribute NumOfFood numeric',
                  '@attribute Score numeric',
                  '@attribute NextScore numeric',
+=======
+    """
+    The Game manages the control flow, soliciting actions from agents.
+    """
+
+    def __init__( self, agents, display, rules, startingIndex=0, muteAgents=False, catchExceptions=False ):
+        self.agentCrashed = False
+        self.agents = agents
+        self.display = display
+        self.rules = rules
+        self.startingIndex = startingIndex
+        self.gameOver = False
+        self.muteAgents = muteAgents
+        self.catchExceptions = catchExceptions
+        self.moveHistory = []
+        self.totalAgentTimes = [0 for agent in agents]
+        self.totalAgentTimeWarnings = [0 for agent in agents]
+        self.agentTimeout = False
+        import io
+        self.agentOutput = [io.StringIO() for agent in agents]
+
+    def getProgress(self):
+        if self.gameOver:
+            return 1.0
+        else:
+            return self.rules.getProgress(self)
+
+    def _agentCrash( self, agentIndex, quiet=False):
+        "Helper method for handling agent crashes"
+        if not quiet: traceback.print_exc()
+        self.gameOver = True
+        self.agentCrashed = True
+        self.rules.agentCrash(self, agentIndex)
+
+    OLD_STDOUT = None
+    OLD_STDERR = None
+
+    def mute(self, agentIndex):
+        if not self.muteAgents: return
+        global OLD_STDOUT, OLD_STDERR
+        import io
+        OLD_STDOUT = sys.stdout
+        OLD_STDERR = sys.stderr
+        sys.stdout = self.agentOutput[agentIndex]
+        sys.stderr = self.agentOutput[agentIndex]
+
+    def unmute(self):
+        if not self.muteAgents: return
+        global OLD_STDOUT, OLD_STDERR
+        # Revert stdout/stderr to originals
+        sys.stdout = OLD_STDOUT
+        sys.stderr = OLD_STDERR
+
+    def run( self ):
+        """
+        Main control loop for game play.
+        """
+        self.display.initialize(self.state.data)
+        self.numMoves = 0
+
+        ###self.display.initialize(self.state.makeObservation(1).data)
+        # inform learning agents of the game start
+        for i in range(len(self.agents)):
+            agent = self.agents[i]
+            if not agent:
+                self.mute(i)
+                # this is a null agent, meaning it failed to load
+                # the other team wins
+                print("Agent %d failed to load" % i, file=sys.stderr)
+                self.unmute()
+                self._agentCrash(i, quiet=True)
+                return
+
+            if ("registerInitialState" in dir(agent)):
+                self.mute(i)
+                if self.catchExceptions:
+                    try:
+                        timed_func = TimeoutFunction(agent.registerInitialState, int(self.rules.getMaxStartupTime(i)))
+                        try:
+                            start_time = time.time()
+                            timed_func(self.state.deepCopy())
+                            time_taken = time.time() - start_time
+                            self.totalAgentTimes[i] += time_taken
+                        except TimeoutFunctionException:
+                            print("Agent %d ran out of time on startup!" % i, file=sys.stderr)
+                            self.unmute()
+                            self.agentTimeout = True
+                            self._agentCrash(i, quiet=True)
+                            return
+                    except Exception as data:
+                        self._agentCrash(i, quiet=False)
+                        self.unmute()
+                        return
+                else:
+                    agent.registerInitialState(self.state.deepCopy())
+                ## TODO: could this exceed the total time
+                self.unmute()
+
+        agentIndex = self.startingIndex
+        numAgents = len( self.agents)
+        step = 0
+
+        # Writting file
+        path = 'datasets/data_collection/'
+        filename = 'log.arff'
+        needHeader = False
+        if not os.path.isfile(f'{path}{filename}'):
+            needHeader = True
+            print('This file did not exist')
+        
+        f = open(f'{path}{filename}', mode = 'a')
+        if needHeader:
+            header = [f'@relation {filename}',
+                 '',
+                 '@attribute PacX numeric',
+                 '@attribute PacY numeric',
+                 '@attribute LegalNorth {1,0}',
+                 '@attribute LegalSouth {1,0}',
+                 '@attribute LegalEast {1,0}',
+                 '@attribute LegalWest {1,0}',
+                 '@attribute Gosthx numeric',
+                 '@attribute Gosthy numeric',
+				 
+>>>>>>> dev1
                  '@attribute Direction {North,South,East,West,Stop}',
                  '',
                  '@data']

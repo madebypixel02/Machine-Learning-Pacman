@@ -620,8 +620,8 @@ class Game(object):
         step = 0
 
         # Writting file
-        path = 'datasets/data_collection/phase4'
-        filename = 'modelTrickyTraining.arff'
+        path = 'datasets/data_collection/phase4/'
+        filename = 'test_mediummaps.arff'
         needHeader = False
         if not os.path.isfile(f'{path}{filename}'):
             needHeader = True
@@ -644,6 +644,7 @@ class Game(object):
 				 '@attribute DirToGhost2{North,South,East,West,Stop}',
 				 '@attribute DirToGhost3{North,South,East,West,Stop}',
 				 '@attribute DirToGhost4{North,South,East,West,Stop}',
+				 '@attribute Move{North,South,East,West,Stop}'
                  '',
                  '@data']
 

@@ -266,7 +266,10 @@ class BasicAgentAA(BustersAgent):
         self.weka = Weka()
         self.weka.start_jvm()
 
-        
+        # behavior 8 stuff
+        self.lastMove = 'Stop'
+        self.asymptoticDistance = 10
+        self.asymptoticFreedom = 4
     ''' Example of counting something'''
     def countFood(self, gameState):
         food = 0
@@ -324,13 +327,21 @@ class BasicAgentAA(BustersAgent):
 #PrintLineData
 #----------------------------------------------------------------------------------------------------------------------------------------
     def printLineData(self, gameState):
+        """
+        Method overrriden which is called by the game.py file
+        """
         return self.printLineData2(gameState)
 
     def printLineData1(self, gameState):
+        """
+        Returns a string from the BustersAgent printLineData
+        """
         return super().printLineData(gameState)
         
     def printLineData2(self, gameState):
-
+        """
+        Returns a string with the attributes relevant for the weka classifiers
+        """
         legalActions = self.lastGameState.getLegalPacmanActions()[:-1]
         livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
         pacmanPosition = gameState.getPacmanPosition()
@@ -356,12 +367,44 @@ class BasicAgentAA(BustersAgent):
         self.lastGameState = gameState
         return s
 
+    def printLineData3(self, gameState):
+        """
+        Returns meta information together with the weka classifiers prediction
+        freedom = nlegalActions-1
+        weighted_freedom = freedom*alpha weigthed_freedom*(1-alpha)
+        distanceTarget
+        weighted_distance_target
+        lastMove
+        voteClassifier1
+        voteClassifier2
+        voteClassifier3
+        Move
+        """
+
+        freedom = len(gameState.getLegalPacmanActions())-1
+        self.asymptoticFreedom = fredom*0.2 + self.asymptoticFreedom*0.8
+        pacx, pacy = gameState.getPacmanPosition()
+        distance = gameState.getDistanceNearestGhost(pacx,pacy)[0]
+        self.asymptoticDistance = distance*0.2 + self.asymptoticDistance*0.8
+
+        s = ''.join([str(freedom)]+
+                    [',' + str(asymptoticFreedom)]+
+                    [',' + str(distance)]+
+                    [',' + str(asymptoticDistance)]+
+                    [','+self.lastMove]+
+                    [','+self.behavior4(gameState)]+
+                    [','+self.behavior5(gameState)]+
+                    [','+self.behavior6(gameState)]+
+                    self.behavior1(gameState))
+        self.lastMove = self.behavior1(gameState)
+
+        return s
 # Chose Action
 #--------------------------------------------------------------------------------------------------------------------------------------
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior1(gameState)
+        return self.behavior5(gameState)
 
     # Tutorial 1 pacman
     def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -617,9 +660,61 @@ class BasicAgentAA(BustersAgent):
             if livingGhosts[i] == True: 
                 s += [self.behavior1(gameState, positions[i][0], positions[i][1])]
             else:
-                s += "Stop"
-
+                s += ["Stop"]
         print(s)
-        move = self.weka.predict('./datasets/models/testModel2.model',s,'./datasets/data_collection/log.arff')
+        move = self.weka.predict('./datasets/models/modelBehavior4.model',s,'./datasets/data_collection/phase4/training_easy_maps.arff')
         if move in legalActions: return move
         return random.choice(legalActions)
+
+    def behavior5(self, gameState):
+        legalActions = gameState.getLegalPacmanActions()[:-1]
+        ghostx = []
+        ghosty = []
+        pacmanPosition = gameState.getPacmanPosition()
+        pacx = pacmanPosition[0]
+        pacy = pacmanPosition[1]
+        positions = gameState.getGhostPositions() 
+        livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        
+        s = [x for x in gameState.getPacmanPosition()]
+        
+        s += ['1' if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True: 
+                s += [self.behavior1(gameState, positions[i][0], positions[i][1])]
+            else:
+                s += ["Stop"]
+
+        move = self.weka.predict('./datasets/models/modelBehavior5.model',s,'./datasets/data_collection/phase4/training_largemaps.arff')
+        if move in legalActions: return move
+        return random.choice(legalActions)
+
+    def behavior6(self, gameState):
+        legalActions = gameState.getLegalPacmanActions()[:-1]
+        ghostx = []
+        ghosty = []
+        pacmanPosition = gameState.getPacmanPosition()
+        pacx = pacmanPosition[0]
+        pacy = pacmanPosition[1]
+        positions = gameState.getGhostPositions() 
+        livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        
+        s = [x for x in gameState.getPacmanPosition()]
+        
+        s += ['1' if x in legalActions else '0' for x in ['North', 'South', 'East', 'West']]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True: 
+                s += [self.behavior1(gameState, positions[i][0], positions[i][1])]
+            else:
+                s += ["Stop"]
+
+        move = self.weka.predict('./datasets/models/modelBehavior6.model',s,'./datasets/data_collection/phase4/training_mediummaps.arff')
+        if move in legalActions: return move
+        return random.choice(legalActions)
+
+    def behavior7(self, gameState):
+        pass

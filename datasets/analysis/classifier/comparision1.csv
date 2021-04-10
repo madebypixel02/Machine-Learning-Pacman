@@ -1,0 +1,22 @@
+Tester:     weka.experiment.PairedCorrectedTTester -G 4,5,6 -D 1 -R 2 -S 0.05 -result-matrix "weka.experiment.ResultMatrixCSV -mean-prec 2 -stddev-prec 2 -col-name-width 0 -row-name-width 25 -mean-width 0 -stddev-width 0 -sig-width 0 -count-width 0 -print-row-names -enum-col-names"
+Analysing:  Percent_correct
+Datasets:   4
+Resultsets: 3
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       3/28/21, 11:37 AM
+
+
+Dataset,[1],[2],'',[3],''
+training_tutorial1.arff,58.94,63.09,v,39.30,*
+alpha_training_tutorial1.,56.73,60.73,v,38.30,*
+'\'beta_training_tutorial1.',55.82,60.89,v,37.47,*
+'\'gamma_training_tutorial1',58.26,60.64,v,39.05,*
+'[v/ /*]','','',[4/0/0],'',[0/0/4]
+
+
+Key,
+[1],'trees.J48 \'-C 0.25 -M 2\' -217733168393644444'
+[2],'trees.RandomForest \'-P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1\' 1116839470751428698'
+[3],'bayes.NaiveBayes \'\' 5995231201785697655'
+

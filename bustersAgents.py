@@ -244,12 +244,11 @@ class BasicAgentAA(BustersAgent):
     def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
+
+        # behavior2 stuff
+        """
         self.targetDirections = Stack()
         self.targetPositions = Stack()
-        self.weka = Weka()
-        self.weka.start_jvm()
-        
-        
         defaultIndices = [2,0,1,3]
         self.phantomIndices = []
         counter = 0
@@ -261,7 +260,11 @@ class BasicAgentAA(BustersAgent):
             counter += 1
 
         if i == 0: self.phantomIndices = defaultIndices.copy()
+        """
 
+        # behaviork, k>2  stuff
+        self.weka = Weka()
+        self.weka.start_jvm()
 
         
     ''' Example of counting something'''
@@ -321,7 +324,7 @@ class BasicAgentAA(BustersAgent):
 #PrintLineData
 #----------------------------------------------------------------------------------------------------------------------------------------
     def printLineData(self, gameState):
-        return self.printLineData1(gameState)
+        return self.printLineData2(gameState)
 
     def printLineData1(self, gameState):
         return super().printLineData(gameState)
@@ -329,14 +332,26 @@ class BasicAgentAA(BustersAgent):
     def printLineData2(self, gameState):
 
         legalActions = self.lastGameState.getLegalPacmanActions()[:-1]
+        livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
         pacmanPosition = gameState.getPacmanPosition()
+        positions = gameState.getGhostPositions()
         pacx = pacmanPosition[0]
         pacy = pacmanPosition[1]
+
+        bestDirToGhost = []
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True: 
+                bestDirToGhost += [','+self.behavior1(gameState, positions[i][0], positions[i][1])]
+            else:
+                bestDirToGhost += ",Stop"
+
         s = ''.join([',' + str(x) for x in self.lastGameState.getPacmanPosition()]+
                     [',1' if x in legalActions else ',0' for x in ['North', 'South', 'East', 'West']]+
                     [',' + str(gameState.getDistanceNearestGhost(pacx,pacy)[1][0])]+
 					[',' + str(gameState.getDistanceNearestGhost(pacx,pacy)[1][1])]+
-                    [',' + self.prediction['action']])[1:]
+                    bestDirToGhost+
+                    [',' + self.prediction['action']]
+                    )[1:]
 
         self.lastGameState = gameState
         return s
@@ -346,7 +361,7 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior3(gameState)
+        return self.behavior1(gameState)
 
     # Tutorial 1 pacman
     def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -572,14 +587,15 @@ class BasicAgentAA(BustersAgent):
             ghostx.append(i[0])
             ghosty.append(i[1])
             s+=[i[0],i[1]]
-        s += [i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances[1:]]
-        s += [gameState.getDistanceNearestFood() if gameState.getDistanceNearestFood()!=None else -1]
-        s += [gameState.getGhostDirections().get(i) if i != None else "Stop" for i in range(4)]
+        s += [i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances]
+        s += [gameState.getGhostDirections().get(i) if gameState.getGhostDirections().get(i) != None else "Stop" for i in range(4)]
         s += [np.mean(ghostx)]
         s += [np.mean(ghosty)]
         s += [np.mean([i if i != None or i == 0 else -1 for i in gameState.data.ghostDistances])]
-        print(s)
-        return self.weka.predict('./datasets/models/project3_model.model',s,'./datasets/data_collection/beta/beta_training_tutorial1.arff')
+        move = self.weka.predict('./datasets/models/project3_model.model',s,'./datasets/data_collection/beta/beta_training_tutorial1.arff')
+        
+        if move in legalActions: return move
+        return random.choice(legalActions)
     
     # Phase 4 attempt 1
     def behavior4(self, gameState):
@@ -598,11 +614,12 @@ class BasicAgentAA(BustersAgent):
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
         for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
-            if livingGhosts[i] == True:
+            if livingGhosts[i] == True: 
                 s += [self.behavior1(gameState, positions[i][0], positions[i][1])]
             else:
                 s += "Stop"
 
+        print(s)
         move = self.weka.predict('./datasets/models/testModel2.model',s,'./datasets/data_collection/log.arff')
         if move in legalActions: return move
         return random.choice(legalActions)

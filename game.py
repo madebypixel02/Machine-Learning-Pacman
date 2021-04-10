@@ -620,8 +620,8 @@ class Game(object):
         step = 0
 
         # Writting file
-        path = 'datasets/data_collection/'
-        filename = 'log.arff'
+        path = 'datasets/data_collection/phase4'
+        filename = 'modelTrickyTraining.arff'
         needHeader = False
         if not os.path.isfile(f'{path}{filename}'):
             needHeader = True
@@ -640,7 +640,10 @@ class Game(object):
                  '@attribute Gosthx numeric',
                  '@attribute Gosthy numeric',
 				 
-                 '@attribute Direction {North,South,East,West,Stop}',
+                 '@attribute DirToGhost1{North,South,East,West,Stop}',
+				 '@attribute DirToGhost2{North,South,East,West,Stop}',
+				 '@attribute DirToGhost3{North,South,East,West,Stop}',
+				 '@attribute DirToGhost4{North,South,East,West,Stop}',
                  '',
                  '@data']
 
@@ -783,4 +786,3 @@ class Game(object):
                     self.unmute()
                     return
         self.display.finish()
-

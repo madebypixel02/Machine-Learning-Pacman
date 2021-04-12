@@ -404,7 +404,7 @@ class BasicAgentAA(BustersAgent):
     def chooseAction(self, gameState):
         self.countActions = self.countActions + 1
         self.printInfo(gameState)
-        return self.behavior5(gameState)
+        return self.behavior4(gameState)
 
     # Tutorial 1 pacman
     def behavior1(self, gameState, ghostx = None, ghosty = None):

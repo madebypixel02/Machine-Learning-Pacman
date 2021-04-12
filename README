@@ -1,0 +1,19 @@
+We added a new folder. Here it is its structure
+
+	datasets: Contains all the data related with our ml agents
+		
+		data_collection: Contains all the datasets we generated
+			phase4: A new folder dedicated for saving datasets from phase4
+		
+		models: There they are all the weka models we made
+
+		wekaThings: Contains some saved filters and expressions in order to reuse them along the datasets
+
+----------------------------------------------------------------------------------------------------
+Also we added some extra files:
+	requiremts.txt: contains the libraries used for this tutorial
+	stack.py: contains the stack data structure... Used in the behavior2 for the BasicAgentAA
+	Practice 1 Report.pdf contains the report of all the work done.
+
+---------------------------------------------------------------------------------------------------
+Thanks for reading... hope you find our work interesting

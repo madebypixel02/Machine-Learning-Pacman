@@ -388,9 +388,9 @@ class BasicAgentAA(BustersAgent):
         self.asymptoticDistance = distance*0.2 + self.asymptoticDistance*0.8
 
         s = ''.join([str(freedom)]+
-                    [',' + str(asymptoticFreedom)]+
+                    [',' + str(self.asymptoticFreedom)]+
                     [',' + str(distance)]+
-                    [',' + str(asymptoticDistance)]+
+                    [',' + str(self.asymptoticDistance)]+
                     [','+self.lastMove]+
                     [','+self.behavior4(gameState)]+
                     [','+self.behavior5(gameState)]+

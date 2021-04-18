@@ -26,7 +26,7 @@ class QLearningAgent(ReinforcementAgent):
         self.actions = {"north":0, "east":1, "south":2, "west":3, "exit":4}
         self.table_file = open("qtable.txt", "r+")
         self.q_table = self.readQtable()
-        self.epsilon = 1
+        self.epsilon = 0.1
 
     def readQtable(self):
         "Read qtable from disc"
@@ -150,8 +150,19 @@ class QLearningAgent(ReinforcementAgent):
         Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
 
         """
-        "*** YOUR CODE HERE ***"
+        
+        if action == 'exit':
+            q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha *(reward)
+        else:
+            bestAction = self.computeActionFromQValues(nextState)
+            if bestAction == None:
+                bestAction = 'exit'
+        
+            q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 
+        self.q_table[self.computePosition(state)][self.actions[action]] = q_value
+        self.writeQtable()
+        
 
     def getPolicy(self, state):
         "Return the best action in the qtable for a given state"

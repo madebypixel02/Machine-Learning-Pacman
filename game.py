@@ -27,6 +27,7 @@ from builtins import str
 from builtins import range
 from past.utils import old_div
 from builtins import object
+from qstate import QState
 from util import *
 import time, os
 import traceback
@@ -708,8 +709,10 @@ class Game(object):
                 self.state = self.state.generateSuccessor( agentIndex, action )
 
             # For Q-learning: update Q-table
-            #if agentIndex == 0:
-            #    agent.update(observation, action, self.state, agent.getReward(observation, action, self.state))
+            if agentIndex == 0:
+                state = QState(observation)
+                nextState = QState(self.state)
+                agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 
                 
             # Change the display

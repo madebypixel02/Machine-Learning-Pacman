@@ -242,7 +242,32 @@ class GameState(object):
             return minDistance
 
         else:
-            return None;
+            return None
+
+    def getDistanceNearestGhost(self, x, y):
+        positions = self.getGhostPositions()
+        livingGhosts = self.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        ghostCount = []
+        ghostPositions = []
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True:
+                ghostCount.append(livingGhosts[i])
+                ghostPositions.append(positions[i])                
+	
+			#print("Ghost Count:", ghostCount)
+			#print("Ghost Positions:", ghostPositions)
+
+        if len(ghostCount) > 0: # Check that there are still some ghosts alive
+            objectPosition = (x, y)
+            distances = []
+            for j in ghostPositions:
+                ghostPosition = j[0],j[1]
+                distance = util.manhattanDistance(objectPosition, ghostPosition)
+                if distance >= 0:
+                    distances.append(distance)
+            minDistance = min(distances)
+            closestGhost = ghostPositions[distances.index(minDistance)]
+        return minDistance, closestGhost
 
     def getGhostPositions(self):
         return self.ghostPositions

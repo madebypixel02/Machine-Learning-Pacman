@@ -281,7 +281,6 @@ class BasicAgentAA(BustersAgent):
     def printLineData(self, gameState):
         return "XXXXXXXXXX"
 
-
 class QLearningAgent(BustersAgent):
 
     #Initialization
@@ -346,7 +345,7 @@ class QLearningAgent(BustersAgent):
         """
         
         "*** YOUR CODE HERE ***"        
-        util.raiseNotDefined()
+        return 0
 
 
     def getQValue(self, state, action):
@@ -423,9 +422,13 @@ class QLearningAgent(BustersAgent):
 
     def update(self, state, action, nextState, reward):
         """
-            The parent class calls this to observe a
-            state = action => nextState and reward transition.
-            You should do your Q-Value update here
+        The parent class calls this to observe a
+        state = action => nextState and reward transition.
+        You should do your Q-Value update here
+
+        Good Terminal state -> reward 1
+        Bad Terminal state -> reward -1
+        Otherwise -> reward 0
 
         Q-Learning update:
 
@@ -433,11 +436,20 @@ class QLearningAgent(BustersAgent):
         Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + 0)
         else:
         Q(state,action) <- (1-self.alpha) Q(state,action) + self.alpha * (r + self.discount * max a' Q(nextState, a'))
-        
-        """
 
-        "*** YOUR CODE HERE ***"        
-        util.raiseNotDefined()
+        """
+        
+        if action == 'exit':
+            q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha *(reward)
+        else:
+            bestAction = self.computeActionFromQValues(nextState)
+            if bestAction == None:
+                bestAction = 'exit'
+        
+            q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
+
+        self.q_table[self.computePosition(state)][self.actions[action]] = q_value
+        self.writeQtable()
 
 
 
@@ -449,10 +461,11 @@ class QLearningAgent(BustersAgent):
         "Return the highest q value for a given state"        
         return self.computeValueFromQValues(state)
 
-    def getReward(self, state, action, nextstate):
+    def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
-        
-        "*** YOUR CODE HERE ***"        
-        util.raiseNotDefined()
+        if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) == 0:
+            return 0
+        return 5
+        "*** YOUR CODE HERE ***"
 
 

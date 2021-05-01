@@ -11,7 +11,6 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
 """
 Busters.py is a vengeful variant of Pacman where Pacman hunts ghosts, but
 cannot see them.  Numbers at the bottom of the display are noisy distance
@@ -125,10 +124,10 @@ class GameState(object):
         if agentIndex == 0:
             state.data.scoreChange += -TIME_PENALTY # Penalty for waiting around
         else:
-            GhostRules.decrementTimer( state.data.agentStates[agentIndex] )
+            GhostRules.decrementTimer( state.data.agentStates[agentIndex])
 
         # Resolve multi-agent effects
-        GhostRules.checkDeath( state, agentIndex )
+        GhostRules.checkDeath( state, agentIndex)
 
         # Check food eaten
         GhostRules.checkFoodEaten ( state, agentIndex )
@@ -166,6 +165,7 @@ class GameState(object):
         return self.data.agentStates[0].copy()
 
     def getPacmanPosition( self ):
+       # print(self.data.agentStates[0].getPosition())
         return self.data.agentStates[0].getPosition()
 
     def getNumAgents( self ):
@@ -242,7 +242,33 @@ class GameState(object):
             return minDistance
 
         else:
-            return None;
+            return None
+    
+    def getDistanceNearestGhost(self, x, y):
+        positions = self.getGhostPositions()
+        livingGhosts = self.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        ghostCount = []
+        ghostPositions = []
+        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+            if livingGhosts[i] == True:
+                ghostCount.append(livingGhosts[i])
+                ghostPositions.append(positions[i])                
+        
+        #print("Ghost Count:", ghostCount)
+        #print("Ghost Positions:", ghostPositions)
+
+        if len(ghostCount) > 0: # Check that there are still some ghosts alive
+            objectPosition = (x, y)
+            distances = []
+            for j in ghostPositions:
+                ghostPosition = j[0],j[1]
+                distance = util.manhattanDistance(objectPosition, ghostPosition)
+                if distance >= 0:
+                    distances.append(distance)
+            minDistance = min(distances)
+            closestGhost = ghostPositions[distances.index(minDistance)]
+            
+            return minDistance, closestGhost
 
     def getGhostPositions(self):
         return self.ghostPositions
@@ -374,7 +400,7 @@ class PacmanRules(object):
     """
     These functions govern how pacman interacts with his environment under
     the classic game rules.
-    """
+     """
     def getLegalActions( state ):
         """
         Returns a list of possible actions.
@@ -489,16 +515,16 @@ def default(str):
 def parseAgentArgs(str):
     if str == None: return {}
     pieces = str.split(',')
-    opts = {}
+    options = {}
     for p in pieces:
         if '=' in p:
             key, val = p.split('=')
         else:
             key,val = p, 1
-        opts[key] = val
-    return opts
+        options[key] = val
+    return options
 
-def readCommand( argv ):
+def readCommand():
     """
     Processes the command used to run pacman from the command line.
     """
@@ -535,8 +561,52 @@ def readCommand( argv ):
                       help='Renders the ghosts in the display (cheating)', default=True)
     parser.add_option('-t', '--frameTime', dest='frameTime', type='float',
                       help=default('Time to delay between frames; <0 means keyboard'), default=0.1)
+    
+    parser.add_option('-d', '--discount',action='store',
+                         type='float',dest='discount',default=0.9,
+                         help='Discount on future (default %default)')
+    parser.add_option('-r', '--livingReward',action='store',
+                         type='float',dest='livingReward',default=0.0,
+                         metavar="R", help='Reward for living for a time step (default %default)')
+    parser.add_option('--no', '--noise',action='store',
+                         type='float',dest='noise',default=0.2,
+                         metavar="P", help='How often action results in ' +
+                         'unintended direction (default %default)' )
+    parser.add_option('-e', '--epsilon',action='store',
+                         type='float',dest='epsilon',default=0.3,
+                         metavar="E", help='Chance of taking a random action in q-learning (default %default)')
+    parser.add_option('--le', '--learningRate',action='store',
+                         type='float',dest='learningRate',default=0.5,
+                         metavar="P", help='TD learning rate (default %default)' )
+    parser.add_option('--it', '--iterations',action='store',
+                         type='int',dest='iters',default=10,
+                         metavar="K", help='Number of rounds of value iteration (default %default)')
+    parser.add_option('--episodes',action='store',
+                         type='int',dest='episodes',default=1,
+                         metavar="K", help='Number of epsiodes of the MDP to run (default %default)')
+    parser.add_option('-w', '--windowSize', metavar="X", type='int',dest='gridSize',default=150,
+                         help='Request a window width of X pixels *per grid cell* (default %default)')
 
+    parser.add_option('--text',action='store_true',
+                         dest='textDisplay',default=False,
+                         help='Use text-only ASCII display')
+    parser.add_option('--pause',action='store_true',
+                         dest='pause',default=False,
+                         help='Pause GUI after each time step when running the MDP')
+    parser.add_option('--quiet',action='store_true',
+                         dest='quiet',default=False,
+                         help='Skip display of any learning episodes')
+    parser.add_option('--speed',action='store', metavar="S", type=float,
+                         dest='speed',default=1.0,
+                         help='Speed of animation, S > 1.0 is faster, 0.0 < S < 1.0 is slower (default %default)')
+    parser.add_option('-m', '--manual',action='store_true',
+                         dest='manual',default=False,
+                         help='Manually control agent')
+    parser.add_option('-v', '--valueSteps',action='store_true' ,default=False,
+                         help='Display each step of value iteration')
+                         
     options, otherjunk = parser.parse_args()
+
     if len(otherjunk) != 0:
         raise Exception('Command line input not understood: ' + otherjunk)
     args = dict()
@@ -564,6 +634,13 @@ def readCommand( argv ):
                                                                   options.showGhosts, \
                                                                   frameTime = options.frameTime)
     args['numGames'] = options.numGames
+
+    # MANAGE CONFLICTS
+    if options.textDisplay or options.quiet:
+    # if options.quiet:
+        options.pause = False
+        # options.manual = False
+
 
     return args
 
@@ -611,7 +688,6 @@ def runGames( layout, pacman, ghosts, display, numGames, maxMoves=-1):
         print('Scores:       ', ', '.join([str(score) for score in scores]))
         print('Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate))
         print('Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins]))
-
     return games
 
 if __name__ == '__main__':
@@ -625,5 +701,5 @@ if __name__ == '__main__':
 
     > python pacman.py --help
     """
-    args = readCommand( sys.argv[1:] ) # Get game components based on input
+    args = readCommand() # Get game components based on input
     runGames( **args )

@@ -23,7 +23,7 @@ import random
 import string
 import time
 import types
-import tkinter
+import tkinter 
 
 _Windows = sys.platform == 'win32'  # True if on Win95/98/NT
 

@@ -249,10 +249,11 @@ class GameState(object):
         livingGhosts = self.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
         ghostCount = []
         ghostPositions = []
-        for i in range(len(livingGhosts)): # Store only the ghosts marked as True and their positions in the above lists
+        for i in range(len(positions)): # Store only the ghosts marked as True and their positions in the above lists
+
             if livingGhosts[i] == True:
                 ghostCount.append(livingGhosts[i])
-                ghostPositions.append(positions[i])                
+                ghostPositions.append(positions[i])              
 	
 			#print("Ghost Count:", ghostCount)
 			#print("Ghost Positions:", ghostPositions)

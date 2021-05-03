@@ -618,6 +618,7 @@ class Game(object):
 
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
+        
         step = 0
         while not self.gameOver:
             # Fetch the next agent
@@ -725,7 +726,7 @@ class Game(object):
             # Track progress
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
-            agentIndex = ( agentIndex + 1 ) % numAgents
+            agentIndex = ( agentIndex + 1 ) % len(observation.getGhostPositions())
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())

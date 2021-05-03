@@ -281,6 +281,7 @@ class BasicAgentAA(BustersAgent):
     def printLineData(self, gameState):
         return "XXXXXXXXXX"
 
+from qstate import QState
 class QLearningAgent(BustersAgent):
 
     #Initialization
@@ -288,7 +289,7 @@ class QLearningAgent(BustersAgent):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
         self.epsilon = 0.0
-        self.alpha = 0.5
+        self.alpha = 0.0
         self.discount = 0.8
         self.actions = {"North":0, "East":1, "South":2, "West":3}
         if os.path.exists("qtable.txt"):
@@ -297,7 +298,7 @@ class QLearningAgent(BustersAgent):
         else:
             self.table_file = open("qtable.txt", "w+")
             #"*** CHECK: NUMBER OF ROWS IN QTABLE DEPENDS ON THE NUMBER OF STATES ***"
-            self.initializeQtable(9)
+            self.initializeQtable(17)
 
     def initializeQtable(self, nrows):
         "Initialize qtable"
@@ -343,9 +344,8 @@ class QLearningAgent(BustersAgent):
         """
         Compute the row of the qtable for a given state.
         """
-        
-        "*** YOUR CODE HERE ***"        
-        return 0
+             
+        return state.id-1
 
 
     def getQValue(self, state, action):
@@ -404,7 +404,7 @@ class QLearningAgent(BustersAgent):
           no legal actions, which is the case at the terminal state, you
           should choose None as the action.
         """
-
+        qstate = QState(state)
         # Pick Action
         legalActions = state.getLegalPacmanActions()
         if 'Stop' in legalActions: legalActions.remove("Stop")
@@ -417,7 +417,7 @@ class QLearningAgent(BustersAgent):
 
         if flip:
             return random.choice(legalActions)
-        return self.getPolicy(state)
+        return self.getPolicy(qstate)
 
 
     def update(self, state, action, nextState, reward):
@@ -449,6 +449,9 @@ class QLearningAgent(BustersAgent):
             q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 
         self.q_table[self.computePosition(state)][self.actions[action]] = q_value
+        print('State:', state)
+        print('Next state:', nextState)
+        print('Reward:', reward)
         self.writeQtable()
 
 
@@ -463,9 +466,15 @@ class QLearningAgent(BustersAgent):
 
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
-        if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) == 0:
-            return 0
-        return 5
-        "*** YOUR CODE HERE ***"
+        reward = 0
+        
+        if nextGameState.getDistanceNearestGhost(*nextGameState.getPacmanPosition())[0] - gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0]  < 0:
+            reward += 1
+        else: 
+            reward -=2
+        if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
+            reward +=5
+        return reward
+
 
 

@@ -11,10 +11,32 @@
 # **************************************************************************** #
 
 class QState():
-
     def __init__(self, gameState):
+        """
+        4 possible recomended directions
+        4 possible number of ghosts (without 0)
+        therfore 16 states + the states which have a number of ghosts = 0
+        """
         self.recommended_dir = self.behavior1(gameState)
-        self.ghost_count = self.countGhosts(gameState)
+        self.ghosts = self.countGhosts(gameState)
+        self.__id = self.__getId()
+
+        # Additional info
+        self.__legal_actions = gameState.getLegalActions()
+    
+    def __str__(self):
+        return 'State {}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
+
+    @property
+    def id(self):
+        return self.__id
+
+    
+    def __getId(self):
+        if self.ghosts == 0: return 17
+        i = {'North':0, 'East':4, 'South':8, 'West':12}[self.recommended_dir]
+        i += self.ghosts
+        return i
 
     def behavior1(self, gameState, ghostx = None, ghosty = None):
         
@@ -94,4 +116,14 @@ class QState():
         return count
 
     def getGrid(self, gameState):
-        print(gameState.layout.width)
+        grid = 1
+        pacX, pacY = gameState.getPacmanPosition()
+        if pacX > gameState.layout.width//2 : 
+            grid +=1
+        if pacY > gameState.layout.height//2:
+            grid += 2
+        return grid
+    
+    def getLegalPacmanActions(self):
+        return self.__legal_actions
+        

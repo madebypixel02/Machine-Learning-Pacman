@@ -255,7 +255,7 @@ class GameState(object):
                 ghostCount.append(livingGhosts[i])
                 ghostPositions.append(positions[i])              
 	
-			#print("Ghost Count:", ghostCount)
+            print("Ghost Count:", len(ghostCount))
 			#print("Ghost Positions:", ghostPositions)
 
         if len(ghostCount) > 0: # Check that there are still some ghosts alive

@@ -6,7 +6,7 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/08 21:37:08 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/08 22:44:04 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,8 @@ class QState():
         legal = gameState.getLegalActions(0) # Legal position from the pacman
         
         # Define new legal actions that don't allow Pacman to stop or go in the opposite direction
-        legal.remove("Stop")
+        if "Stop" in legal:
+            legal.remove("Stop")
         if len(legal) > 1:
             if pacmanDirection == "North":
                 legal.remove("South")

@@ -728,7 +728,7 @@ class Game(object):
             # Track progress
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
-            agentIndex = ( agentIndex + 1 ) % numAgents 
+            agentIndex = ( agentIndex + 1 ) % len(self.state.getGhostPositions())
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())

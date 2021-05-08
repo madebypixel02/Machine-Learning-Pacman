@@ -6,7 +6,7 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/08 22:44:04 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/09 01:27:40 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,16 @@ class QState():
         4 possible number of ghosts (without 0)
         therfore 16 states + the states which have a number of ghosts = 0
         """
-        self.recommended_dir = self.behavior1(gameState)
+        self.recommended_dir = "North"
+        positions = gameState.getGhostPositions()
+        livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        ghostCount = 0
+        for i in range(len(positions)): # Store only the ghosts marked as True and their positions in the above lists
+
+            if livingGhosts[i] == True:
+                ghostCount += 1
+        if ghostCount > 0:
+            self.recommended_dir = self.behavior1(gameState)
         self.ghosts = self.countGhosts(gameState)
         self.recommended_zone = self.recommendedZone(gameState)
         self.__id = self.__getId()

@@ -712,6 +712,7 @@ class Game(object):
             # For Q-learning: update Q-table
             if agentIndex == 0:
                 state = QState(observation)
+                print(state)
                 nextState = QState(self.state)
                 agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 

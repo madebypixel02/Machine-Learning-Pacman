@@ -1,4 +1,7 @@
 from otherBustersAgents import *
+"""
+The other agents were moved to another file otherbustersAgents.py
+"""
 from qstate import QState
 class QLearningAgent(BustersAgent):
 

@@ -378,9 +378,6 @@ class Actions(object):
     getSuccessor = staticmethod(getSuccessor)
 
 class GameStateData(object):
-    """
-
-    """
     def __init__( self, prevState = None ):
         """
         Generates a new data packet by copying information from its predecessor.
@@ -607,7 +604,7 @@ class Game(object):
                             self.agentTimeout = True
                             self._agentCrash(i, quiet=True)
                             return
-                    except Exception as data:
+                    except Exception:
                         self._agentCrash(i, quiet=False)
                         self.unmute()
                         return

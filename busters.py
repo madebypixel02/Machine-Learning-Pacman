@@ -255,7 +255,7 @@ class GameState(object):
                 ghostCount.append(livingGhosts[i])
                 ghostPositions.append(positions[i])              
 	
-			#print("Ghost Count:", ghostCount)
+            #print("Ghost Count:", len(ghostCount))
 			#print("Ghost Positions:", ghostPositions)
 
         if len(ghostCount) > 0: # Check that there are still some ghosts alive
@@ -435,8 +435,8 @@ class GhostRules(object):
 
     def applyAction( state, action, ghostIndex):
         legal = GhostRules.getLegalActions( state, ghostIndex )
-        if action not in legal:
-            raise Exception("Illegal ghost action: " + str(action))
+        #if action not in legal:
+        #    raise Exception("Illegal ghost action: " + str(action))
 
         ghostState = state.data.agentStates[ghostIndex]
         vector = Actions.directionToVector( action, 1 )

@@ -298,7 +298,7 @@ class QLearningAgent(BustersAgent):
         else:
             self.table_file = open("qtable.txt", "w+")
             #"*** CHECK: NUMBER OF ROWS IN QTABLE DEPENDS ON THE NUMBER OF STATES ***"
-            self.initializeQtable(17)
+            self.initializeQtable(36)
 
     def initializeQtable(self, nrows):
         "Initialize qtable"
@@ -345,7 +345,7 @@ class QLearningAgent(BustersAgent):
         Compute the row of the qtable for a given state.
         """
              
-        return state.id-1
+        return state.id
 
 
     def getQValue(self, state, action):

@@ -713,7 +713,9 @@ class Game(object):
             if agentIndex == 0:
                 state = QState(observation)
                 nextState = QState(self.state)
-                agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
+                print(f"Pacman is at zone {state.getGrid(observation, observation.getPacmanPosition()[0], observation.getPacmanPosition()[1])}")
+                print(f"Most populated zone is {state.getMostPopulated(observation)}")
+                #agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 
                 
             # Change the display
@@ -726,7 +728,7 @@ class Game(object):
             # Track progress
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
-            agentIndex = ( agentIndex + 1 ) % len(observation.getGhostPositions())
+            agentIndex = ( agentIndex + 1 ) % numAgents
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())

@@ -6,9 +6,11 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/09 01:27:40 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/09 11:36:49 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+import random
 
 class QState():
     def __init__(self, gameState):
@@ -41,8 +43,8 @@ class QState():
         return self.__id
     
     def __getId(self):
-        i = {'North':0, 'South':9, 'East':18, 'West':27}[self.recommended_dir]
-        i += {'North':0, 'South':1, 'East':2, 'West':3, 'NorthEast':4, 'NorthWest':5, 'SouthEast':6, 'SouthWest':7, 'Stop':8}[self.recommended_zone]
+        i = {'North':0, 'South':5, 'East':10, 'West':15}[self.recommended_dir]
+        i += {'North':0, 'South':1, 'East':2, 'West':3, 'Stop':4}[self.recommended_zone]
         return i
 
     def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -152,13 +154,13 @@ class QState():
         if recom_zone == pacZone:
             return "Stop"
         if pacZone == 0 and recom_zone == 3:
-            return "NorthEast"
+            return random.choice(["North", "East"])
         if pacZone == 1 and recom_zone == 2:
-            return "NorthWest"
+            return random.choice(["North", "West"])
         if pacZone == 2 and recom_zone == 1:
-            return "SouthEast"
+            return random.choice(["South", "East"])
         if pacZone == 3 and recom_zone == 0:
-            return "SouthWest"
+            return random.choice(["South", "West"])
         if pacZone + 2 == recom_zone:
             return "North"
         if pacZone - 2 == recom_zone:

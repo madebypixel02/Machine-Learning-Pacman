@@ -28,6 +28,7 @@ from builtins import range
 from past.utils import old_div
 from builtins import object
 from qstate import QState
+from advisor import *
 from util import *
 import time, os
 import traceback
@@ -399,6 +400,7 @@ class GameStateData(object):
         self._lose = False
         self._win = False
         self.scoreChange = 0
+        self.advisor = Advisor()
 
     def deepCopy( self ):
         state = GameStateData( self )
@@ -408,6 +410,7 @@ class GameStateData(object):
         state._foodEaten = self._foodEaten
         state._foodAdded = self._foodAdded
         state._capsuleEaten = self._capsuleEaten
+        state.advisor = self.advisor
         return state
 
     def copyAgentStates( self, agentStates ):
@@ -512,11 +515,8 @@ class GameStateData(object):
             self.agentStates.append( AgentState( Configuration( pos, Directions.STOP), isPacman) )
         self._eaten = [False for a in self.agentStates]
 
-try:
-    import boinc
-    _BOINC_ENABLED = True
-except:
-    _BOINC_ENABLED = False
+
+_BOINC_ENABLED = False
 
 class Game(object):
     """
@@ -729,8 +729,6 @@ class Game(object):
             # Next agent
             agentIndex = ( agentIndex + 1 ) % numAgents
 
-            if _BOINC_ENABLED:
-                boinc.set_fraction_done(self.getProgress())
 
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):

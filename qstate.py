@@ -6,9 +6,11 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/09 01:27:40 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/09 14:33:12 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+import random
 
 class QState():
     def __init__(self, gameState):
@@ -17,32 +19,40 @@ class QState():
         4 possible number of ghosts (without 0)
         therfore 16 states + the states which have a number of ghosts = 0
         """
-        self.recommended_dir = "North"
         positions = gameState.getGhostPositions()
         livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+        
         ghostCount = 0
         for i in range(len(positions)): # Store only the ghosts marked as True and their positions in the above lists
-
             if livingGhosts[i] == True:
                 ghostCount += 1
+                
         if ghostCount > 0:
-            self.recommended_dir = self.behavior1(gameState)
-        self.recommended_zone = self.recommendedZone(gameState)
+            self.recommended_dir = gameState.data.advisor.behavior2(gameState)
+            self.recommended_dir2 = self.behavior1(gameState)
+            self.recommended_zone = self.recommendedZone(gameState)
+        else:
+            self.recommended_dir=self.recommended_dir2 = self.recommended_zone = 'Stop'
+        
         self.__id = self.__getId()
 
         # Additional info
         self.__legal_actions = gameState.getLegalActions()
     
     def __str__(self):
-        return 'State {}: <recomended:{}, recommended_zone:{}>'.format(self.__id, self.recommended_dir, self.recommended_zone)
+        return 'State {}: <recomended_dir1:{}, recomended_dir2:{}, recommended_zone:{}>'.format(self.__id, self.recommended_dir, self.recommended_dir, self.recommended_zone)
 
     @property
     def id(self):
         return self.__id
     
     def __getId(self):
-        i = {'North':0, 'South':9, 'East':18, 'West':27}[self.recommended_dir]
-        i += {'North':0, 'South':1, 'East':2, 'West':3, 'NorthEast':4, 'NorthWest':5, 'SouthEast':6, 'SouthWest':7, 'Stop':8}[self.recommended_zone]
+
+        if self.recommended_dir =='Stop':
+            return 80
+        i = {'North':0, 'South':20, 'East':40, 'West':60}[self.recommended_dir]
+        i += {'North':0, 'South':5, 'East':10, 'West':15}[self.recommended_dir2]
+        i += {'North':0, 'South':1, 'East':2, 'West':3, 'Stop':4}[self.recommended_zone]
         return i
 
     def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -105,7 +115,7 @@ class QState():
                     move = pacmanDirection
 
             else: # Define movement were he can only go in one direction (corridors or dead ends)
-                move = legal[0]
+                move = legal[0] 
             #choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
             #if pacmanDirection in legal:
             #    choices.append(pacmanDirection)
@@ -113,6 +123,8 @@ class QState():
             #        choices.append(move)
             #move = random.choice(choices)
 
+        if move == 'Stop':
+            return 'North'
         return move
 
     def behavior2(self, gameState):
@@ -264,7 +276,7 @@ class QState():
 
     def getGrid(self, gameState, posX, posY):
         zone = 0
-        print(f"Width: {gameState.data.layout.width}, Height: {gameState.data.layout.height}")
+        
         if posX > gameState.data.layout.width // 2 : 
             zone += 1
         if posY > gameState.data.layout.height // 2:
@@ -282,7 +294,7 @@ class QState():
             for j in range(gameState.data.layout.height):
                 if gameState.hasFood(i, j):
                      zones[self.getGrid(gameState, i, j)] += 1
-        print(zones)
+
         return zones.index(max(zones))
 
     def recommendedZone(self, gameState):
@@ -291,13 +303,13 @@ class QState():
         if recom_zone == pacZone:
             return "Stop"
         if pacZone == 0 and recom_zone == 3:
-            return "NorthEast"
+            return random.choice(["North", "East"])
         if pacZone == 1 and recom_zone == 2:
-            return "NorthWest"
+            return random.choice(["North", "West"])
         if pacZone == 2 and recom_zone == 1:
-            return "SouthEast"
+            return random.choice(["South", "East"])
         if pacZone == 3 and recom_zone == 0:
-            return "SouthWest"
+            return random.choice(["South", "West"])
         if pacZone + 2 == recom_zone:
             return "North"
         if pacZone - 2 == recom_zone:

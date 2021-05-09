@@ -182,7 +182,6 @@ class QLearningAgent(BustersAgent):
 
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
-<<<<<<< HEAD
         reward = 0
         directions = {"North": 1, "South": -1, "East": 2, "West": -2}
         dir = state.data.agentStates[0].getDirection()
@@ -190,12 +189,6 @@ class QLearningAgent(BustersAgent):
         
         if nextGameState.getDistanceNearestGhost(*nextGameState.getPacmanPosition())[0] - gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0]  < 0:
             reward += 5
-=======
-        reward = 10
-        
-        if nextGameState.getDistanceNearestGhost(*nextGameState.getPacmanPosition())[0] - gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0]  < 0:
-            reward += gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0] 
->>>>>>> dev1
         else: 
             reward -= 1
         if directions[dir] == -directions[nextdir]
@@ -203,12 +196,8 @@ class QLearningAgent(BustersAgent):
         if state.recommendedZone(gameState) not in gameState.getLegalActions(0):
             reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
-<<<<<<< HEAD
             reward += 100
         if nextstate.getNumFood < state.getNumFood():
             reward += 20
-=======
-            reward +=10
->>>>>>> dev1
         return reward
  

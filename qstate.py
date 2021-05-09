@@ -6,7 +6,7 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/09 13:43:07 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/09 14:33:12 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ class QState():
         if ghostCount > 0:
             self.recommended_dir = gameState.data.advisor.behavior2(gameState)
             self.recommended_dir2 = self.behavior1(gameState)
+            self.recommended_zone = self.recommendedZone(gameState)
         
         self.__id = self.__getId()
 
@@ -43,8 +44,8 @@ class QState():
         return self.__id
     
     def __getId(self):
-        i = {'North':0, 'South':5, 'East':10, 'West':15}[self.recommended_dir]
-        i += {'North':0, 'South':1, 'East':2, 'West':3}[self.recommended_dir2]
+        i = {'North':0, 'South':20, 'East':40, 'West':60}[self.recommended_dir]
+        i += {'North':0, 'South':5, 'East':10, 'West':15}[self.recommended_dir2]
         i += {'North':0, 'South':1, 'East':2, 'West':3, 'Stop':4}[self.recommended_zone]
 
     def behavior1(self, gameState, ghostx = None, ghosty = None):

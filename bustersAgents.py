@@ -16,7 +16,7 @@ class QLearningAgent(BustersAgent):
         else:
             self.table_file = open("qtable.txt", "w+")
             #"*** CHECK: NUMBER OF ROWS IN QTABLE DEPENDS ON THE NUMBER OF STATES ***"
-            self.initializeQtable(16)
+            self.initializeQtable(80)
 
     def initializeQtable(self, nrows):
         "Initialize qtable"
@@ -184,20 +184,20 @@ class QLearningAgent(BustersAgent):
         "Return the obtained reward"
         reward = 0
         directions = {"North": 1, "South": -1, "East": 2, "West": -2}
-        dir = state.data.agentStates[0].getDirection()
-        next_dir = nextstate.data.agentStates[0].getDirection()
+        dir = gameState.data.agentStates[0].getDirection()
+        next_dir = nextGameState.data.agentStates[0].getDirection()
         
         if nextGameState.getDistanceNearestGhost(*nextGameState.getPacmanPosition())[0] - gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0]  < 0:
             reward += 5
         else: 
             reward -= 1
-        if directions[dir] == -directions[nextdir]
+        if directions[dir] == -directions[nextdir]:
             reward -= 5
         if state.recommendedZone(gameState) not in gameState.getLegalActions(0):
             reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
             reward += 100
-        if nextstate.getNumFood < state.getNumFood():
+        if nextGameState.getNumFood < gameState.getNumFood():
             reward += 20
         return reward
  

@@ -19,6 +19,7 @@ class QState():
         """
         self.recommended_dir = self.behavior1(gameState)
         self.ghosts = self.countGhosts(gameState)
+        
         self.__id = self.__getId()
 
         # Additional info
@@ -33,7 +34,7 @@ class QState():
 
     
     def __getId(self):
-        if self.ghosts == 0: return 17
+        
         i = {'North':0, 'East':4, 'South':8, 'West':12}[self.recommended_dir]
         i += self.ghosts
         return i

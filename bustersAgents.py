@@ -288,8 +288,8 @@ class QLearningAgent(BustersAgent):
     def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
-        self.epsilon = 0.0
-        self.alpha = 0.0
+        self.epsilon = 0.1
+        self.alpha = 0.5
         self.discount = 0.8
         self.actions = {"North":0, "East":1, "South":2, "West":3}
         if os.path.exists("qtable.txt"):
@@ -449,9 +449,7 @@ class QLearningAgent(BustersAgent):
             q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 
         self.q_table[self.computePosition(state)][self.actions[action]] = q_value
-        print('State:', state)
-        print('Next state:', nextState)
-        print('Reward:', reward)
+
         self.writeQtable()
 
 
@@ -471,10 +469,7 @@ class QLearningAgent(BustersAgent):
         if nextGameState.getDistanceNearestGhost(*nextGameState.getPacmanPosition())[0] - gameState.getDistanceNearestGhost(*gameState.getPacmanPosition())[0]  < 0:
             reward += 1
         else: 
-            reward -=2
+            reward -=1
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
-            reward +=5
+            reward +=100
         return reward
-
-
-

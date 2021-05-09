@@ -35,6 +35,7 @@ from game import Configuration
 from util import nearestPoint
 from util import manhattanDistance
 import sys, util, types, time, random, layout, os
+import math
 
 ########################################
 # Parameters for noisy sensor readings #
@@ -254,9 +255,6 @@ class GameState(object):
             if livingGhosts[i] == True:
                 ghostCount.append(livingGhosts[i])
                 ghostPositions.append(positions[i])              
-	
-            #print("Ghost Count:", len(ghostCount))
-			#print("Ghost Positions:", ghostPositions)
 
         if len(ghostCount) > 0: # Check that there are still some ghosts alive
             objectPosition = (x, y)
@@ -268,6 +266,9 @@ class GameState(object):
                     distances.append(distance)
             minDistance = min(distances)
             closestGhost = ghostPositions[distances.index(minDistance)]
+        else: 
+            minDistance = math.inf
+            closestGhost = (-1,-1)
         return minDistance, closestGhost
 
     def getGhostPositions(self):

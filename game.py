@@ -713,9 +713,7 @@ class Game(object):
             if agentIndex == 0:
                 state = QState(observation)
                 nextState = QState(self.state)
-                print(f"Pacman is at zone {state.getGrid(observation, observation.getPacmanPosition()[0], observation.getPacmanPosition()[1])}")
-                print(f"Most populated zone is {state.getMostPopulated(observation)}")
-                #agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
+                agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 
                 
             # Change the display

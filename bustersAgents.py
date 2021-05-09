@@ -444,7 +444,7 @@ class QLearningAgent(BustersAgent):
         else:
             bestAction = self.computeActionFromQValues(nextState)
             if bestAction == None:
-                bestAction = 'exit'
+                bestAction = random.choice(state.getLegalPacmanActions()[1:])
         
             q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 

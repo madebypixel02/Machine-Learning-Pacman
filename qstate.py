@@ -27,7 +27,6 @@ class QState():
                 ghostCount += 1
         if ghostCount > 0:
             self.recommended_dir = self.behavior1(gameState)
-        self.ghosts = self.countGhosts(gameState)
         self.recommended_zone = self.recommendedZone(gameState)
         self.__id = self.__getId()
 

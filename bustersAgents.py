@@ -160,18 +160,18 @@ class QLearningAgent(BustersAgent):
 
         """
         
-        if action == 'Stop':
-            return None
+        
+        if state.isfinal():
+            action = random.choice(['North', 'South', 'East', 'West'])
+            q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward)
+
         else:
             bestAction = self.computeActionFromQValues(nextState)
             if bestAction == None:
-                bestAction = random.choice(state.getLegalPacmanActions())
-                
-            if bestAction == 'Stop':
-                return None
+                return
             q_value = (1-self.alpha)*self.getQValue(state,action) + self.alpha * (reward + self.discount *self.getQValue(nextState, bestAction))
 
-            self.q_table[self.computePosition(state)][self.actions[action]] = q_value
+        self.q_table[self.computePosition(state)][self.actions[action]] = q_value
 
         self.writeQtable()
 
@@ -187,6 +187,8 @@ class QLearningAgent(BustersAgent):
 
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
+        if state.isfinal():
+            return gameState.getScore()*0.1
         reward = 0
         directions = {"North": 1, "South": -1, "East": 2, "West": -2, 'Stop':0}
         dir = gameState.data.agentStates[0].getDirection()
@@ -206,3 +208,6 @@ class QLearningAgent(BustersAgent):
             reward += 20
         return reward
  
+    def final(self, gameState):
+        state = QState(gameState)
+        self.update(state, self.getAction(gameState), None, self.getReward(state, 'Stop', None, gameState, None))

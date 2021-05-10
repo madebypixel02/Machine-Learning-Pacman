@@ -124,3 +124,6 @@ class QState():
         Method required by the QLearningAgent
         """
         return self.__legal_actions
+
+    def isfinal(self):
+        return self.id == 80

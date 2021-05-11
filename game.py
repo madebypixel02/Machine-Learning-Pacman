@@ -739,4 +739,5 @@ class Game(object):
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
+                    
         self.display.finish()

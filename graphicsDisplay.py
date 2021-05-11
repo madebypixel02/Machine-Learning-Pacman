@@ -189,6 +189,7 @@ class PacmanGraphics(object):
         return False
 
     def initialize(self, state, isBlue = False):
+        
         self.isBlue = isBlue
         self.startGraphics(state)
 
@@ -639,7 +640,6 @@ class FirstPersonPacmanGraphics(PacmanGraphics):
         self.capture = capture
 
     def initialize(self, state, isBlue = False):
-
         self.isBlue = isBlue
         PacmanGraphics.startGraphics(self, state)
         # Initialize distribution images

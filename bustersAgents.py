@@ -188,7 +188,7 @@ class QLearningAgent(BustersAgent):
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
         if state.isfinal():
-            return gameState.getScore()*0.1
+            return gameState.getScore()*0.001
         reward = 0
         directions = {"North": 1, "South": -1, "East": 2, "West": -2, 'Stop':0}
         dir = gameState.data.agentStates[0].getDirection()

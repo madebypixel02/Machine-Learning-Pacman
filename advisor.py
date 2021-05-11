@@ -83,15 +83,19 @@ class Advisor:
 		pacX,pacY = gameState.getPacmanPosition()
 		legalActions = gameState.getLegalActions(0)
 		ghostAlive = False
+
 		i = 0
+		targetPosition = [0,0]
 		while not ghostAlive and self.targetPositions.isempty():
-			i += 1
-			ghostAlive = gameState.getLivingGhosts()[i]
+			
+			ghostAlive = gameState.getLivingGhosts()[i+1]
 			
 		
-		targetPosition = [0,0]
-		targetPosition[0] = gameState.getGhostPositions()[i-1][0]
-		targetPosition[1] = gameState.getGhostPositions()[i-1][1]
+			
+			print(gameState.getGhostPositions(), gameState.getLivingGhosts(),i)
+			targetPosition[0] = gameState.getGhostPositions()[i][0]
+			targetPosition[1] = gameState.getGhostPositions()[i][1]
+			i += 1
 			
 
 		if not self.targetPositions.isempty():
@@ -124,7 +128,7 @@ class Advisor:
 
 			
 
-			if moves[0] == 'Nothing' and moves[1] == 'Nothing':
+			if moves[0] == 'Nothing' and moves[1] == 'Nothing' and not self.targetDirections.isempty():
 				move = self.targetDirections.extract()
 				self.targetPositions.extract()
 			

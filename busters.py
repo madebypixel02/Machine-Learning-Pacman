@@ -170,7 +170,11 @@ class GameState(object):
         return self.data.agentStates[0].getPosition()
 
     def getNumAgents( self ):
-        return len( self.data.agentStates )
+        
+        try:
+            return len( self.getGhostPositions() )+1
+        except:
+            return len( self.data.agentStates )
 
     def getScore( self ):
         return self.data.score
@@ -342,9 +346,9 @@ class GameState(object):
         Creates an initial game state from a layout array (see layout.py).
         """
         self.data.initialize(layout, numGhostAgents)
-        self.livingGhosts = [False] + [True for i in range(numGhostAgents)]
         self.data.ghostDistances = [getNoisyDistance(self.getPacmanPosition(), self.getGhostPosition(i)) for i in range(1, self.getNumAgents())]
         self.ghostPositions = [self.getGhostPosition(i) for i in range(1, self.getNumAgents())]
+        self.livingGhosts = [False] + [True for i in range(len(self.getGhostPositions()))]
 
     def getGhostPosition( self, agentIndex ):
         if agentIndex == 0:

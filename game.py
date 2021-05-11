@@ -614,7 +614,7 @@ class Game(object):
                 self.unmute()
 
         agentIndex = self.startingIndex
-        numAgents = len( self.agents )
+        numAgents = len(self.state.getGhostPositions())+1
         
         step = 0
         while not self.gameOver:

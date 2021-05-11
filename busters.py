@@ -591,7 +591,11 @@ def readCommand( argv ):
     pacman = pacmanType(**agentOpts) # Instantiate Pacman with agentArgs
     args['pacman'] = pacman
     import graphicsDisplay
-    args['display'] = graphicsDisplay.FirstPersonPacmanGraphics(options.zoom, \
+
+    if options.quietGraphics:
+        args['display'] = 'Minimal'
+    else:
+        args['display'] = graphicsDisplay.FirstPersonPacmanGraphics(options.zoom, \
                                                                   options.showGhosts, \
                                                                   frameTime = options.frameTime)
     args['numGames'] = options.numGames

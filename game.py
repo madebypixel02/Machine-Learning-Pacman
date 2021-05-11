@@ -572,7 +572,8 @@ class Game(object):
         """
         Main control loop for game play.
         """
-        self.display.initialize(self.state.data)
+        if self.display != 'Minimal':
+            self.display.initialize(self.state.data)
         self.numMoves = 0
 
         ###self.display.initialize(self.state.makeObservation(1).data)
@@ -715,7 +716,8 @@ class Game(object):
                 
                 
             # Change the display
-            self.display.update( self.state.data )
+            if self.display != 'Minimal':
+                self.display.update( self.state.data )
             ###idx = agentIndex - agentIndex % 2 + 1
             ###self.display.update( self.state.makeObservation(idx).data )
 
@@ -739,5 +741,5 @@ class Game(object):
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
-                    
-        self.display.finish()
+        if self.display != 'Minimal':          
+            self.display.finish()

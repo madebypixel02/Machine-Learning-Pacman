@@ -86,13 +86,8 @@ class Advisor:
 
 		i = 0
 		targetPosition = [0,0]
-		while not ghostAlive and self.targetPositions.isempty():
-			
+		while not ghostAlive and self.targetPositions.isempty():	
 			ghostAlive = gameState.getLivingGhosts()[i+1]
-			
-		
-			
-			print(gameState.getGhostPositions(), gameState.getLivingGhosts(),i)
 			targetPosition[0] = gameState.getGhostPositions()[i][0]
 			targetPosition[1] = gameState.getGhostPositions()[i][1]
 			i += 1

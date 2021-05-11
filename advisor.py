@@ -81,12 +81,13 @@ class Advisor:
 	def behavior2(self, gameState):
 		maps = gameState.getWalls()
 		pacX,pacY = gameState.getPacmanPosition()
-		legalActions = gameState.getLegalActions(0)
+		legalActions = gameState.getLegalActions(0)[1:]
+		
 		ghostAlive = False
-
 		i = 0
-		targetPosition = [0,0]
-		while not ghostAlive and self.targetPositions.isempty():	
+		
+		while not ghostAlive and self.targetPositions.isempty():
+			targetPosition = [0,0]	
 			ghostAlive = gameState.getLivingGhosts()[i+1]
 			targetPosition[0] = gameState.getGhostPositions()[i][0]
 			targetPosition[1] = gameState.getGhostPositions()[i][1]

@@ -4,7 +4,6 @@ class Advisor:
 	def __init__(self):
 		self.targetDirections = Stack()
 		self.targetPositions = Stack()
-		self.phantomIndices = [3,2,1,0]
 		
 
 	def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -86,12 +85,13 @@ class Advisor:
 		ghostAlive = False
 		i = 0
 		while not ghostAlive and self.targetPositions.isempty():
-			ghostAlive = gameState.getLivingGhosts()[self.phantomIndices[i]+1]
-			
-			targetPosition = [0,0]
-			targetPosition[0] = gameState.getGhostPositions()[self.phantomIndices[i]][0]
-			targetPosition[1] = gameState.getGhostPositions()[self.phantomIndices[i]][1]
 			i += 1
+			ghostAlive = gameState.getLivingGhosts()[i]
+			
+		
+		targetPosition = [0,0]
+		targetPosition[0] = gameState.getGhostPositions()[i-1][0]
+		targetPosition[1] = gameState.getGhostPositions()[i-1][1]
 			
 
 		if not self.targetPositions.isempty():

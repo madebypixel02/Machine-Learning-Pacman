@@ -377,9 +377,6 @@ class Actions(object):
     getSuccessor = staticmethod(getSuccessor)
 
 class GameStateData(object):
-    """
-
-    """
     def __init__( self, prevState = None ):
         """
         Generates a new data packet by copying information from its predecessor.
@@ -399,6 +396,7 @@ class GameStateData(object):
         self._lose = False
         self._win = False
         self.scoreChange = 0
+
 
     def deepCopy( self ):
         state = GameStateData( self )
@@ -512,11 +510,8 @@ class GameStateData(object):
             self.agentStates.append( AgentState( Configuration( pos, Directions.STOP), isPacman) )
         self._eaten = [False for a in self.agentStates]
 
-try:
-    import boinc
-    _BOINC_ENABLED = True
-except:
-    _BOINC_ENABLED = False
+
+_BOINC_ENABLED = False
 
 class Game(object):
     """
@@ -538,6 +533,7 @@ class Game(object):
         self.agentTimeout = False
         import io
         self.agentOutput = [io.StringIO() for agent in agents]
+
 
     def getProgress(self):
         if self.gameOver:
@@ -575,11 +571,22 @@ class Game(object):
         """
         Main control loop for game play.
         """
-        self.display.initialize(self.state.data)
+        if self.display != 'Minimal':
+            self.display.initialize(self.state.data)
         self.numMoves = 0
-
+        
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
+
+
+        # Writting file
+        path = ''
+        filename = 'log_approach1.txt'
+        if not os.path.isfile(f'{path}{filename}'):
+            print('This file did not exist')
+        
+        f = open(file = f'{path}{filename}', mode = 'a')
+
         for i in range(len(self.agents)):
             agent = self.agents[i]
             if not agent:
@@ -607,7 +614,7 @@ class Game(object):
                             self.agentTimeout = True
                             self._agentCrash(i, quiet=True)
                             return
-                    except Exception as data:
+                    except Exception:
                         self._agentCrash(i, quiet=False)
                         self.unmute()
                         return
@@ -617,10 +624,11 @@ class Game(object):
                 self.unmute()
 
         agentIndex = self.startingIndex
-        numAgents = len( self.agents )
+        numAgents = len(self.state.getGhostPositions())+1
         
         step = 0
         while not self.gameOver:
+        
             # Fetch the next agent
             agent = self.agents[agentIndex]
             move_time = 0
@@ -712,14 +720,14 @@ class Game(object):
             # For Q-learning: update Q-table
             if agentIndex == 0:
                 state = QState(observation)
+                f.write(str(state)+'\n')
                 nextState = QState(self.state)
-                print(f"Pacman is at zone {state.getGrid(observation, observation.getPacmanPosition()[0], observation.getPacmanPosition()[1])}")
-                print(f"Most populated zone is {state.getMostPopulated(observation)}")
-                #agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
+                agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 
                 
             # Change the display
-            self.display.update( self.state.data )
+            if self.display != 'Minimal':
+                self.display.update( self.state.data )
             ###idx = agentIndex - agentIndex % 2 + 1
             ###self.display.update( self.state.makeObservation(idx).data )
 
@@ -728,12 +736,11 @@ class Game(object):
             # Track progress
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
-            agentIndex = ( agentIndex + 1 ) % numAgents 
+            agentIndex = ( agentIndex + 1 ) % numAgents
 
-            if _BOINC_ENABLED:
-                boinc.set_fraction_done(self.getProgress())
 
         # inform a learning agent of the game result
+        
         for agentIndex, agent in enumerate(self.agents):
             if "final" in dir( agent ) :
                 try:
@@ -745,4 +752,6 @@ class Game(object):
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
-        self.display.finish()
+        f.close()
+        if self.display != 'Minimal':          
+            self.display.finish()

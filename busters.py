@@ -35,6 +35,8 @@ from game import Configuration
 from util import nearestPoint
 from util import manhattanDistance
 import sys, util, types, time, random, layout, os
+import math
+
 
 ########################################
 # Parameters for noisy sensor readings #
@@ -145,6 +147,7 @@ class GameState(object):
             a += 1
         if agentIndex == self.getNumAgents() - 1:
             state.numMoves += 1
+        
         return state
 
     def getLegalPacmanActions( self ):
@@ -169,7 +172,11 @@ class GameState(object):
         return self.data.agentStates[0].getPosition()
 
     def getNumAgents( self ):
-        return len( self.data.agentStates )
+        
+        try:
+            return len( self.getGhostPositions() )+1
+        except:
+            return len( self.data.agentStates )
 
     def getScore( self ):
         return self.data.score
@@ -254,9 +261,6 @@ class GameState(object):
             if livingGhosts[i] == True:
                 ghostCount.append(livingGhosts[i])
                 ghostPositions.append(positions[i])              
-	
-            print("Ghost Count:", len(ghostCount))
-			#print("Ghost Positions:", ghostPositions)
 
         if len(ghostCount) > 0: # Check that there are still some ghosts alive
             objectPosition = (x, y)
@@ -268,6 +272,9 @@ class GameState(object):
                     distances.append(distance)
             minDistance = min(distances)
             closestGhost = ghostPositions[distances.index(minDistance)]
+        else: 
+            minDistance = math.inf
+            closestGhost = (-1,-1)
         return minDistance, closestGhost
 
     def getGhostPositions(self):
@@ -301,7 +308,7 @@ class GameState(object):
         Generates a new state by copying information from its predecessor.
         """
         if prevState != None:
-            self.data = GameStateData(prevState.data)
+            self.data = prevState.data.deepCopy()
             self.livingGhosts = prevState.livingGhosts[:]
             self.ghostPositions = prevState.ghostPositions[:]
             self.numMoves = prevState.numMoves;
@@ -311,6 +318,7 @@ class GameState(object):
             self.numMoves = 0;
             self.maxMoves = -1;
             self.data.ghostDistances = []
+
 
     def deepCopy( self ):
         state = GameState( self )
@@ -341,9 +349,9 @@ class GameState(object):
         Creates an initial game state from a layout array (see layout.py).
         """
         self.data.initialize(layout, numGhostAgents)
-        self.livingGhosts = [False] + [True for i in range(numGhostAgents)]
         self.data.ghostDistances = [getNoisyDistance(self.getPacmanPosition(), self.getGhostPosition(i)) for i in range(1, self.getNumAgents())]
         self.ghostPositions = [self.getGhostPosition(i) for i in range(1, self.getNumAgents())]
+        self.livingGhosts = [False] + [True for i in range(len(self.getGhostPositions()))]
 
     def getGhostPosition( self, agentIndex ):
         if agentIndex == 0:
@@ -435,8 +443,8 @@ class GhostRules(object):
 
     def applyAction( state, action, ghostIndex):
         legal = GhostRules.getLegalActions( state, ghostIndex )
-        if action not in legal:
-            raise Exception("Illegal ghost action: " + str(action))
+        #if action not in legal:
+        #    raise Exception("Illegal ghost action: " + str(action))
 
         ghostState = state.data.agentStates[ghostIndex]
         vector = Actions.directionToVector( action, 1 )
@@ -586,7 +594,11 @@ def readCommand( argv ):
     pacman = pacmanType(**agentOpts) # Instantiate Pacman with agentArgs
     args['pacman'] = pacman
     import graphicsDisplay
-    args['display'] = graphicsDisplay.FirstPersonPacmanGraphics(options.zoom, \
+
+    if options.quietGraphics:
+        args['display'] = 'Minimal'
+    else:
+        args['display'] = graphicsDisplay.FirstPersonPacmanGraphics(options.zoom, \
                                                                   options.showGhosts, \
                                                                   frameTime = options.frameTime)
     args['numGames'] = options.numGames

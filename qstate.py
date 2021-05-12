@@ -6,9 +6,10 @@
 #    By: aperez-b <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/01 19:14:12 by aperez-b          #+#    #+#              #
-#    Updated: 2021/05/08 21:37:08 by aperez-b         ###   ########.fr        #
+#    Updated: 2021/05/01 20:09:54 by aperez-b         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 class QState():
     def __init__(self, gameState):
@@ -17,26 +18,25 @@ class QState():
         4 possible number of ghosts (without 0)
         therfore 16 states + the states which have a number of ghosts = 0
         """
+        self.__legal_actions = gameState.getLegalActions()
         self.recommended_dir = self.behavior1(gameState)
         self.ghosts = self.countGhosts(gameState)
         self.recommended_zone = self.recommendedZone(gameState)
         self.__id = self.__getId()
-
-        # Additional info
-        self.__legal_actions = gameState.getLegalActions()
+        
     
     def __str__(self):
+        if self.__id < 10:
+            return 'State 0{}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
         return 'State {}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
 
-    @property
-    def id(self):
-        return self.__id
-    
     def __getId(self):
+        if self.recommended_dir == 'Stop':
+            return 36
         i = {'North':0, 'South':9, 'East':18, 'West':27}[self.recommended_dir]
         i += {'North':0, 'South':1, 'East':2, 'West':3, 'NorthEast':4, 'NorthWest':5, 'SouthEast':6, 'SouthWest':7, 'Stop':8}[self.recommended_zone]
         return i
-
+    
     def behavior1(self, gameState, ghostx = None, ghosty = None):
         
         # Split Pacman coordinates for ease of use
@@ -45,10 +45,13 @@ class QState():
         pacy = pacmanPosition[1]
 
         pacmanDirection = gameState.data.agentStates[0].getDirection()
-        legal = gameState.getLegalActions(0) # Legal position from the pacman
+        legal = self.__legal_actions.copy()# Legal position from the pacman
         
         # Define new legal actions that don't allow Pacman to stop or go in the opposite direction
-        legal.remove("Stop")
+        try:
+            legal.remove("Stop")
+        except:
+            pass
         if len(legal) > 1:
             if pacmanDirection == "North":
                 legal.remove("South")
@@ -96,7 +99,7 @@ class QState():
                     move = pacmanDirection
 
             else: # Define movement were he can only go in one direction (corridors or dead ends)
-                move = legal[0]
+                move = 'North'
             #choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
             #if pacmanDirection in legal:
             #    choices.append(pacmanDirection)
@@ -114,50 +117,17 @@ class QState():
                 count += 1
         return count
 
-    def getGrid(self, gameState, posX, posY):
-        zone = 0
-        print(f"Width: {gameState.data.layout.width}, Height: {gameState.data.layout.height}")
-        if posX > gameState.data.layout.width // 2 : 
-            zone += 1
-        if posY > gameState.data.layout.height // 2:
-            zone += 2
-        return zone
+    def getGrid(self, gameState):
+        grid = 1
+        pacX, pacY = gameState.getPacmanPosition()
+        if pacX > gameState.layout.width//2 : 
+            grid +=1
+        if pacY > gameState.layout.height//2:
+            grid += 2
+        return grid
     
-    def getMostPopulated(self, gameState):
-        zones = [0, 0, 0, 0]
-        positions = gameState.getGhostPositions()
-        livingGhosts = gameState.getLivingGhosts()[1:]
-        for i in range(len(livingGhosts)):
-            if livingGhosts[i] and i < len(positions):
-                zones[self.getGrid(gameState, positions[i][0], positions[i][1])] += 2
-        for i in range(gameState.data.layout.width):
-            for j in range(gameState.data.layout.height):
-                if gameState.hasFood(i, j):
-                     zones[self.getGrid(gameState, i, j)] += 1
-        print(zones)
-        return zones.index(max(zones))
-
-    def recommendedZone(self, gameState):
-        recom_zone = self.getMostPopulated(gameState)
-        pacZone = self.getGrid(gameState, gameState.getPacmanPosition()[0], gameState.getPacmanPosition()[1])
-        if recom_zone == pacZone:
-            return "Stop"
-        if pacZone == 0 and recom_zone == 3:
-            return "NorthEast"
-        if pacZone == 1 and recom_zone == 2:
-            return "NorthWest"
-        if pacZone == 2 and recom_zone == 1:
-            return "SouthEast"
-        if pacZone == 3 and recom_zone == 0:
-            return "SouthWest"
-        if pacZone + 2 == recom_zone:
-            return "North"
-        if pacZone - 2 == recom_zone:
-            return "South"
-        if pacZone + 1 == recom_zone:
-            return "East"
-        if pacZone - 1 == recom_zone:
-            return "West"
- 
     def getLegalPacmanActions(self):
         return self.__legal_actions
+        
+    def isfinal(self):
+        return self.__id == 36

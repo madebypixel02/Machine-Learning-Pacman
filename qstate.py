@@ -140,7 +140,6 @@ class QState():
             for j in range(gameState.data.layout.height):
                 if gameState.hasFood(i, j):
                      zones[self.getGrid(gameState, i, j)] += 1
-        print(zones)
         return zones.index(max(zones))
 
     def recommendedZone(self, gameState):

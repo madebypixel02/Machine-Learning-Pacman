@@ -581,7 +581,7 @@ class Game(object):
 
         # Writting file
         path = ''
-        filename = 'log_approach1.txt'
+        filename = 'log_approach2.txt'
         if not os.path.isfile(f'{path}{filename}'):
             print('This file did not exist')
         

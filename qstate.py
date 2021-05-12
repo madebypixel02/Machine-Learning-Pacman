@@ -68,7 +68,7 @@ class QState():
         
         move = "Stop" # Define "Stop" as the default action
         
-        #print("Smart Legal Actions:", legal)
+
         if ghostx == None and ghosty == None:
             targetPosition = gameState.getDistanceNearestGhost(pacx,pacy)[1] # Get the position of the nearest ghost
         else:
@@ -123,7 +123,6 @@ class QState():
 
     def getGrid(self, gameState, posX, posY):
         zone = 0
-        print(f"Width: {gameState.data.layout.width}, Height: {gameState.data.layout.height}")
         if posX > gameState.data.layout.width // 2 : 
             zone += 1
         if posY > gameState.data.layout.height // 2:

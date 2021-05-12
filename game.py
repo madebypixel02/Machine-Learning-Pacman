@@ -407,7 +407,7 @@ class GameStateData(object):
         state._foodEaten = self._foodEaten
         state._foodAdded = self._foodAdded
         state._capsuleEaten = self._capsuleEaten
-        state.advisor = self.advisor
+        state.advisor = Advisor(self.advisor)
         return state
 
     def copyAgentStates( self, agentStates ):
@@ -535,6 +535,7 @@ class Game(object):
         self.agentTimeout = False
         import io
         self.agentOutput = [io.StringIO() for agent in agents]
+        self.advisor = Advisor()
 
     def getProgress(self):
         if self.gameOver:
@@ -576,8 +577,22 @@ class Game(object):
             self.display.initialize(self.state.data)
         self.numMoves = 0
 
+        
+        self.state.recommended_dir1 = self.advisor.behavior1(self.state)
+        self.state.recommended_dir2 = self.advisor.behavior2(self.state)
+        
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
+
+
+        # Writting file
+        path = ''
+        filename = 'log_approach3.arff'
+        if not os.path.isfile(f'{path}{filename}'):
+            print('This file did not exist')
+        
+        f = open(file = f'{path}{filename}', mode = 'a')
+
         for i in range(len(self.agents)):
             agent = self.agents[i]
             if not agent:
@@ -619,6 +634,10 @@ class Game(object):
         
         step = 0
         while not self.gameOver:
+            if agentIndex == 0:
+                self.state.recommended_dir1 = self.advisor.behavior1(self.state)
+                self.state.recommended_dir2 = self.advisor.behavior2(self.state)
+        
             # Fetch the next agent
             agent = self.agents[agentIndex]
             move_time = 0
@@ -710,7 +729,7 @@ class Game(object):
             # For Q-learning: update Q-table
             if agentIndex == 0:
                 state = QState(observation)
-                print(state)
+                f.write(str(state)+'\n')
                 nextState = QState(self.state)
                 agent.update(state, action, nextState, agent.getReward(state, action, nextState, observation, self.state))
                 
@@ -730,6 +749,7 @@ class Game(object):
 
 
         # inform a learning agent of the game result
+        
         for agentIndex, agent in enumerate(self.agents):
             if "final" in dir( agent ) :
                 try:
@@ -741,5 +761,6 @@ class Game(object):
                     self._agentCrash(agentIndex)
                     self.unmute()
                     return
+        f.close()
         if self.display != 'Minimal':          
             self.display.finish()

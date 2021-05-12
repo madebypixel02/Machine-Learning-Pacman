@@ -1,9 +1,14 @@
 from stack import Stack
 import random
 class Advisor:
-	def __init__(self):
+	def __init__(self, lastObservation=None):
+		if lastObservation != None:
+			self.targetDirections = lastObservation.targetDirections.copy()
+			self.targetPositions = lastObservation.targetPositions.copy()
+		
 		self.targetDirections = Stack()
 		self.targetPositions = Stack()
+		
 		
 
 	def behavior1(self, gameState, ghostx = None, ghosty = None):
@@ -79,24 +84,26 @@ class Advisor:
 		return move
 
 	def behavior2(self, gameState):
+		
 		maps = gameState.getWalls()
 		pacX,pacY = gameState.getPacmanPosition()
 		legalActions = gameState.getLegalActions(0)[1:]
 		
-		ghostAlive = False
+
 		i = 0
-		
-		while not ghostAlive and self.targetPositions.isempty():
-			targetPosition = [0,0]	
-			ghostAlive = gameState.getLivingGhosts()[i+1]
-			targetPosition[0] = gameState.getGhostPositions()[i][0]
-			targetPosition[1] = gameState.getGhostPositions()[i][1]
-			i += 1
+		targetPosition = [[0][0]]
+		targetPosition = list(gameState.getDistanceNearestGhost(pacX,pacY)[1])
 			
-
+		aux = []
 		if not self.targetPositions.isempty():
-			targetPosition = list(self.targetPositions.getUp())	
-
+			
+			aux = list(self.targetPositions.getUp())	
+			if abs(pacX-aux[0])+abs(pacY-aux[1])>6:
+				self.targetPositions.extract()
+				self.targetDirections.extract()
+			else:
+				targetPosition = aux.copy()
+		
 		move = 'Nothing'
 		iterations = 0
 		while move not in legalActions:
@@ -133,8 +140,10 @@ class Advisor:
 					move = moves[0]         
 				
 				if iterations == 1:
-					self.targetDirections.insert(move)
-					self.targetPositions.insert(targetPosition)
+					if targetPosition not in self.targetPositions.data:
+						self.targetPositions.insert(targetPosition)
+						self.targetDirections.insert(move)
+					
 				
 				temp = []
 				indx = []
@@ -149,7 +158,7 @@ class Advisor:
 					minDist = min(temp)
 					classified = []
 					for j in range(len(temp)):
-						if minDist + 2 >= temp[j]:
+						if minDist >= temp[j]:
 							classified.append(indx[j])
 					indx = classified
 
@@ -167,7 +176,7 @@ class Advisor:
 					minDist = min(temp)
 					classified = []
 					for j in range(len(temp)):
-						if minDist + 2 >= temp[j]:
+						if minDist >= temp[j]:
 							classified.append(indx[j])
 					indx = classified
 
@@ -185,7 +194,7 @@ class Advisor:
 					minDist = min(temp)
 					classified = []
 					for j in range(len(temp)):
-						if minDist + 2 >= temp[j]:
+						if minDist  >= temp[j]:
 							classified.append(indx[j])
 					indx = classified
 					targetPosition[0] = pacX
@@ -202,11 +211,12 @@ class Advisor:
 					minDist = min(temp)
 					classified = []
 					for j in range(len(temp)):
-						if minDist + 2 >= temp[j]:
+						if minDist >= temp[j]:
 							classified.append(indx[j])
 					indx = classified
 					targetPosition[0] = pacX
-					targetPosition[1] = random.choice(indx)      
+					targetPosition[1] = random.choice(indx)   
+
 		if move == 'Stop':
-			return 'North'      
+			return 'North'
 		return move        

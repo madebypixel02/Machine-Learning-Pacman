@@ -22,8 +22,8 @@ class QState():
         # QState attributes
         if self.countGhosts(gameState) > 0:
             #Non terminal states
-            self.recommended_dir = gameState.data.advisor.behavior1(gameState)
-            self.recommended_dir2 = gameState.data.advisor.behavior2(gameState)
+            self.recommended_dir = gameState.recommended_dir1
+            self.recommended_dir2 = gameState.recommended_dir2
             self.recommended_zone = self.recommendedZone(gameState)
         else:
             #Final state
@@ -34,8 +34,12 @@ class QState():
 
         # Additional info
         self.__legal_actions = gameState.getLegalActions()
-    
+
     def __str__(self):
+        if self.__id < 10:
+            aux = '0'+str(self.__id)
+            return f'State {aux}: <recomended_dir1:{self.recommended_dir}, recomended_dir2:{self.recommended_dir2}, recommended_zone:{self.recommended_zone}>'
+            
         return f'State {self.__id}: <recomended_dir1:{self.recommended_dir}, recomended_dir2:{self.recommended_dir2}, recommended_zone:{self.recommended_zone}>'
 
     @property

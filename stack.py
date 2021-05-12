@@ -2,7 +2,7 @@ class Stack:
     def __init__(self):
         self.data = []
     
-    def insert(self, newItem):
+    def insert(self, newItem):    
         self.data.append(newItem)
     
     def extract(self):
@@ -16,3 +16,8 @@ class Stack:
 
     def isempty(self):
         return len(self.data) == 0
+    
+    def copy(self):
+        stack = Stack()
+        stack.data = self.data.copy()
+        return stack

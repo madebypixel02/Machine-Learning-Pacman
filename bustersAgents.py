@@ -9,8 +9,8 @@ class QLearningAgent(BustersAgent):
     def registerInitialState(self, gameState):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
-        self.epsilon = 0.4
-        self.alpha = 0.3
+        self.epsilon = 0.2
+        self.alpha = 0.1
         self.discount = 0.8
         self.actions = {"North":0, "East":1, "South":2, "West":3}
         if os.path.exists("qtable.txt"):
@@ -19,7 +19,7 @@ class QLearningAgent(BustersAgent):
         else:
             self.table_file = open("qtable.txt", "w+")
             #"*** CHECK: NUMBER OF ROWS IN QTABLE DEPENDS ON THE NUMBER OF STATES ***"
-            self.initializeQtable(80)
+            self.initializeQtable(81)
 
     def initializeQtable(self, nrows):
         "Initialize qtable"
@@ -188,7 +188,7 @@ class QLearningAgent(BustersAgent):
     def getReward(self, state, action, nextstate, gameState, nextGameState):
         "Return the obtained reward"
         if state.isfinal():
-            return gameState.getScore()*0.001
+            return gameState.getScore()*0.01
         reward = 0
         directions = {"North": 1, "South": -1, "East": 2, "West": -2, 'Stop':0}
         dir = gameState.data.agentStates[0].getDirection()

@@ -28,7 +28,6 @@ from builtins import range
 from past.utils import old_div
 from builtins import object
 from qstate import QState
-from advisor import *
 from util import *
 import time, os
 import traceback
@@ -397,7 +396,7 @@ class GameStateData(object):
         self._lose = False
         self._win = False
         self.scoreChange = 0
-        self.advisor = Advisor()
+
 
     def deepCopy( self ):
         state = GameStateData( self )
@@ -407,7 +406,6 @@ class GameStateData(object):
         state._foodEaten = self._foodEaten
         state._foodAdded = self._foodAdded
         state._capsuleEaten = self._capsuleEaten
-        state.advisor = Advisor(self.advisor)
         return state
 
     def copyAgentStates( self, agentStates ):
@@ -576,10 +574,6 @@ class Game(object):
         if self.display != 'Minimal':
             self.display.initialize(self.state.data)
         self.numMoves = 0
-
-        
-        self.state.recommended_dir1 = self.advisor.behavior1(self.state)
-        self.state.recommended_dir2 = self.advisor.behavior2(self.state)
         
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
@@ -587,7 +581,7 @@ class Game(object):
 
         # Writting file
         path = ''
-        filename = 'log_approach3.arff'
+        filename = 'log_approach1.txt'
         if not os.path.isfile(f'{path}{filename}'):
             print('This file did not exist')
         

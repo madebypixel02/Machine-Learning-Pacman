@@ -36,7 +36,7 @@ from util import nearestPoint
 from util import manhattanDistance
 import sys, util, types, time, random, layout, os
 import math
-from advisor import Advisor
+
 
 ########################################
 # Parameters for noisy sensor readings #
@@ -125,7 +125,6 @@ class GameState(object):
 
         # Time passes
         if agentIndex == 0:
-            self.data.advisor = Advisor(self.data.advisor)
             state.data.scoreChange += -TIME_PENALTY # Penalty for waiting around
         else:
             GhostRules.decrementTimer( state.data.agentStates[agentIndex] )
@@ -314,14 +313,12 @@ class GameState(object):
             self.ghostPositions = prevState.ghostPositions[:]
             self.numMoves = prevState.numMoves;
             self.maxMoves = prevState.maxMoves;
-            self.recommended_dir1 = prevState.recommended_dir1
-            self.recommended_dir2 = prevState.recommended_dir2
         else: # Initial state
             self.data = GameStateData()
             self.numMoves = 0;
             self.maxMoves = -1;
             self.data.ghostDistances = []
-            self.advisor = Advisor()
+
 
     def deepCopy( self ):
         state = GameState( self )

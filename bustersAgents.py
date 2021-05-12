@@ -200,8 +200,6 @@ class QLearningAgent(BustersAgent):
             reward -= 1
         if directions[dir] == -directions[next_dir]:
             reward -= 10
-        if state.recommendedZone(gameState) not in gameState.getLegalActions(0):
-            reward -= 10
         if state.countGhosts(gameState) - nextstate.countGhosts(nextGameState) != 0:
             reward += 100
         if nextGameState.getNumFood() < gameState.getNumFood():
@@ -210,4 +208,4 @@ class QLearningAgent(BustersAgent):
  
     def final(self, gameState):
         state = QState(gameState)
-        self.update(state, self.getAction(gameState), None, self.getReward(state, 'Stop', None, gameState, None))
+        #self.update(state, self.getAction(gameState), None, self.getReward(state, 'Stop', None, gameState, None))

@@ -17,14 +17,16 @@ class QState():
         4 possible number of ghosts (without 0)
         therfore 16 states + the states which have a number of ghosts = 0
         """
+        self.__legal_actions = gameState.getLegalActions()
         self.recommended_dir = self.behavior1(gameState)
         self.ghosts = self.countGhosts(gameState)
         self.__id = self.__getId()
 
         # Additional info
-        self.__legal_actions = gameState.getLegalActions()
-    
+        
     def __str__(self):
+        if self.id < 10:
+            return 'State 0{}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
         return 'State {}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
 
     @property
@@ -33,6 +35,9 @@ class QState():
 
     
     def __getId(self):
+        if self.recommended_dir == 'Stop':
+            return 17
+
         if self.ghosts == 0: return 17
         i = {'North':0, 'East':4, 'South':8, 'West':12}[self.recommended_dir]
         i += self.ghosts
@@ -46,10 +51,13 @@ class QState():
         pacy = pacmanPosition[1]
 
         pacmanDirection = gameState.data.agentStates[0].getDirection()
-        legal = gameState.getLegalActions(0) # Legal position from the pacman
+        legal = self.__legal_actions.copy()# Legal position from the pacman
         
         # Define new legal actions that don't allow Pacman to stop or go in the opposite direction
-        legal.remove("Stop")
+        try:
+            legal.remove("Stop")
+        except:
+            pass
         if len(legal) > 1:
             if pacmanDirection == "North":
                 legal.remove("South")
@@ -97,7 +105,7 @@ class QState():
                     move = pacmanDirection
 
             else: # Define movement were he can only go in one direction (corridors or dead ends)
-                move = legal[0]
+                move = 'North'
             #choices = [move] # Every so often pacman will miss a turn and keep going. Helps to free him when he's stuck
             #if pacmanDirection in legal:
             #    choices.append(pacmanDirection)
@@ -127,3 +135,6 @@ class QState():
     def getLegalPacmanActions(self):
         return self.__legal_actions
         
+    def isfinal(self):
+
+        return self.__id == 17

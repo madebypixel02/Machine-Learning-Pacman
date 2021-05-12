@@ -37,6 +37,10 @@ class QState():
         i += {'North':0, 'South':1, 'East':2, 'West':3, 'NorthEast':4, 'NorthWest':5, 'SouthEast':6, 'SouthWest':7, 'Stop':8}[self.recommended_zone]
         return i
     
+    @property
+    def id(self):
+        return self.__id
+
     def behavior1(self, gameState, ghostx = None, ghosty = None):
         
         # Split Pacman coordinates for ease of use
@@ -117,15 +121,51 @@ class QState():
                 count += 1
         return count
 
-    def getGrid(self, gameState):
-        grid = 1
-        pacX, pacY = gameState.getPacmanPosition()
-        if pacX > gameState.layout.width//2 : 
-            grid +=1
-        if pacY > gameState.layout.height//2:
-            grid += 2
-        return grid
+    def getGrid(self, gameState, posX, posY):
+        zone = 0
+        print(f"Width: {gameState.data.layout.width}, Height: {gameState.data.layout.height}")
+        if posX > gameState.data.layout.width // 2 : 
+            zone += 1
+        if posY > gameState.data.layout.height // 2:
+            zone += 2
+        return zone
     
+    def getMostPopulated(self, gameState):
+        zones = [0, 0, 0, 0]
+        positions = gameState.getGhostPositions()
+        livingGhosts = gameState.getLivingGhosts()[1:]
+        for i in range(len(livingGhosts)):
+            if livingGhosts[i] and i < len(positions):
+                zones[self.getGrid(gameState, positions[i][0], positions[i][1])] += 2
+        for i in range(gameState.data.layout.width):
+            for j in range(gameState.data.layout.height):
+                if gameState.hasFood(i, j):
+                     zones[self.getGrid(gameState, i, j)] += 1
+        print(zones)
+        return zones.index(max(zones))
+
+    def recommendedZone(self, gameState):
+        recom_zone = self.getMostPopulated(gameState)
+        pacZone = self.getGrid(gameState, gameState.getPacmanPosition()[0], gameState.getPacmanPosition()[1])
+        if recom_zone == pacZone:
+            return "Stop"
+        if pacZone == 0 and recom_zone == 3:
+            return "NorthEast"
+        if pacZone == 1 and recom_zone == 2:
+            return "NorthWest"
+        if pacZone == 2 and recom_zone == 1:
+            return "SouthEast"
+        if pacZone == 3 and recom_zone == 0:
+            return "SouthWest"
+        if pacZone + 2 == recom_zone:
+            return "North"
+        if pacZone - 2 == recom_zone:
+            return "South"
+        if pacZone + 1 == recom_zone:
+            return "East"
+        if pacZone - 1 == recom_zone:
+            return "West"
+ 
     def getLegalPacmanActions(self):
         return self.__legal_actions
         

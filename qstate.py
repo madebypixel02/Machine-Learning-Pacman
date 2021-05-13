@@ -27,8 +27,8 @@ class QState():
     
     def __str__(self):
         if self.__id < 10:
-            return 'State 0{}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
-        return 'State {}: <recomended:{}, ghosts:{}>'.format(self.__id, self.recommended_dir, self.ghosts)
+            return 'State 0{}: <recomended_dir:{}, recommended_zone_dir:{}>'.format(self.__id, self.recommended_dir, self.recommended_zone)
+        return 'State {}: <recomended_dir:{}, recomended_zone_dir:{}>'.format(self.__id, self.recommended_dir, self.recommended_zone)
 
     def __getId(self):
         if self.recommended_dir == 'Stop':

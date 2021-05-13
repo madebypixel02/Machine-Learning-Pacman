@@ -10,7 +10,7 @@ class QLearningAgent(BustersAgent):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
         self.epsilon = 0.2
-        self.alpha = 0.1
+        self.alpha = 0.01
         self.discount = 0.8
         self.actions = {"North":0, "East":1, "South":2, "West":3}
         if os.path.exists("qtable.txt"):

@@ -388,6 +388,7 @@ class GameStateData(object):
             self.layout = prevState.layout
             self._eaten = prevState._eaten
             self.score = prevState.score
+            
 
         self._foodEaten = None
         self._foodAdded = None
@@ -396,6 +397,7 @@ class GameStateData(object):
         self._lose = False
         self._win = False
         self.scoreChange = 0
+        
 
 
     def deepCopy( self ):

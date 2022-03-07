@@ -1,6 +1,6 @@
 # Machine-Learning-Pacman
 
-* The Classic ghost-eating game 👾*
+*The Classic ghost-eating game 👾*
 
 [**Report**](https://github.com/madebypixel02/Machine-Learning-Pacman/blob/master/Practice%202%20Report.pdf)
 

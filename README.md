@@ -26,7 +26,7 @@ cd Machine-Learning-Pacman
 Install the required ``python`` libraries:
 
 ```shell
-pip install -r requirements.txt
+JAVA_HOME=/usr/lib/jvm/default pip install -r requirements.txt
 ```
 Test our ``machine learning`` algorithm
 

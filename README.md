@@ -1,4 +1,4 @@
-# Machine-Learning-Pacman | uc3m
+# Machine Learning Pacman | uc3m
 
 *The Classic ghost-eating game 👾*
 

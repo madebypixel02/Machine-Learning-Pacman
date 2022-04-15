@@ -10,6 +10,8 @@
 #                                                                              #
 # **************************************************************************** #
 
+import numpy as np
+
 class QState():
     def __init__(self, gameState):
         """
@@ -21,6 +23,8 @@ class QState():
         self.recommended_dir = self.behavior1(gameState)
         self.ghosts = self.countGhosts(gameState)
         self.__id = self.__getId()
+        self.actions = {"North":0, "East":1, "South":2, "West":3}
+        self.gameState = gameState
 
         # Additional info
         
@@ -138,3 +142,44 @@ class QState():
     def isfinal(self):
 
         return self.__id == 17
+
+    def getVectorState(self, gameState = None):
+        "Convert gameState to a vector"
+        if gameState == None:
+            gameState = self.gameState
+        legalActions = gameState.getLegalPacmanActions()[:-1]
+        
+        pacmanPosition = gameState.getPacmanPosition()
+        pacx = pacmanPosition[0]
+        pacy = pacmanPosition[1]
+        positions = gameState.getGhostPositions() 
+        livingGhosts = gameState.getLivingGhosts()[1:] # Remove Pacman from list of ghosts
+
+
+        
+        s = [x for x in gameState.getPacmanPosition()]
+        
+        s += [1 if x in legalActions else 0 for x in ['North', 'South', 'East', 'West']]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
+        s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
+        s[-1] = s[-1]-s[1]
+        s[-2] = s[-2]-s[0]
+        for i in range(4):
+            try:
+                if livingGhosts[i] == True: 
+                    action = self.behavior1(gameState, positions[i][0], positions[i][1])
+                    temp = np.zeros(4)
+                    temp[self.actions[action]] = 1
+                    s = np.hstack((s, temp))
+                else:
+                    s = np.hstack((s, np.zeros(4)))
+            except:
+                s = np.hstack((s, np.zeros(4)))
+
+
+        """
+        print(f"pacx: {s[0]}, pacy: {s[1]}, legal_actions: N:{s[2]}, S:{s[3]}, E:{s[4]}, W:{s[5]}" )
+        print(f"nearest ghosts: x:{s[6]}, y:{s[7]}, recomended actions: 1:{s[8:12]}, 2:{s[12:16]}, 3:{s[16:20]}, 4:{s[20:24]}")
+        input("Press Enter to continue...")
+        """
+        return s

@@ -108,6 +108,10 @@ class BustersAgent(object):
         "By default, a BustersAgent just stops.  This should be overridden."
         return Directions.STOP
 
+    def update(self, *args, **kwargs):
+        return
+
+
 class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     "An agent controlled by the keyboard that displays beliefs about ghost positions."
 
@@ -280,3 +284,4 @@ class BasicAgentAA(BustersAgent):
 
     def printLineData(self, gameState):
         return "XXXXXXXXXX"
+

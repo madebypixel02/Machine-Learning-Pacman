@@ -162,8 +162,7 @@ class QState():
         s += [1 if x in legalActions else 0 for x in ['North', 'South', 'East', 'West']]
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][0]]
         s += [gameState.getDistanceNearestGhost(pacx,pacy)[1][1]]
-        s[-1] = s[-1]-s[1]
-        s[-2] = s[-2]-s[0]
+  
         for i in range(4):
             try:
                 if livingGhosts[i] == True: 

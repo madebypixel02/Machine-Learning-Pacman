@@ -10,14 +10,14 @@ class DeepQLearningAgent(BustersAgent):
         self.actions = {0:"North", 1:"East", 2:"South", 3:"West"}
         self.actions_rev = {"North":0, "East":1, "South":2, "West":3}
         self.distancer = Distancer(gameState.data.layout, False)
-        self.epsilon = 0.1
+        self.epsilon = 1
         self.alpha = 0.1
         self.discount = 0.1
         self.qstate = QState(gameState)
         self.state = self.qstate.getVectorState(gameState)
-        self.model_path = "agent2.net"
+        self.model_path = "agent.net"
 
-        self.qagent = QAgent(self.discount, self.epsilon, self.alpha, self.state.shape[0], 32, 4, model_name=self.model_path)
+        self.qagent = QAgent(self.discount, self.epsilon, self.alpha, self.state.shape[0], 32, 4, model_name=self.model_path, hidden_dim=64)
         try:
             self.qagent.recover_agent(self.model_path)
         except FileNotFoundError:
@@ -73,7 +73,3 @@ class DeepQLearningAgent(BustersAgent):
         self.qagent.store_transition(state.getVectorState(), self.actions_rev[action], reward=reward, state_=nextState.getVectorState())
         self.qagent.learn()
         self.episodes = self.qagent.total_episodes
-
-        
-
-

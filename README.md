@@ -38,16 +38,10 @@ Note: ``-l`` specifies map to try (from layouts folder), ``-g RandomGhost`` spec
 
 ## Gameplay
 
-<p align="center">
+<div align="center">
   <img src=https://user-images.githubusercontent.com/40824677/157230489-78664ef8-2eb5-41ff-9dc0-ed4b7aa7aa52.gif />
-</p>
+</div>
 
 ## Summary
 
 May 4th, 2021
-
-<p align="center">
-  <a href="https://github.com/madebypixel02/face-recognizer_with_fda_pca_knn">&#11013;</a>
-  <a href="https://github.com/madebypixel02/Uc3m-Projects">&#127968;</a>
-  <a href="https://github.com/madebypixel02/Openssl-Practices-2022">&#10145;</a>
-</p>
